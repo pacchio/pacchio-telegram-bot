@@ -1,23 +1,16 @@
 package org.telegram.telegrambots;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.exceptions.TelegramApiValidationException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static java.lang.StrictMath.toIntExact;
 
 public class MyBot extends TelegramLongPollingBot {
 
@@ -29,12 +22,22 @@ public class MyBot extends TelegramLongPollingBot {
             message.setChatId(update.getMessage().getChatId());
 
             if(update.getMessage().getText().equals("\\start")){
-                message.setText("");
-                message.setReplyMarkup(getKeyboard());
+                message.setReplyMarkup(getKeyboard(Constants.INIT_COMMANDS));
             }
-            else {
-                message.setText(createResponse(update));
+
+            if(update.getMessage().getText().equals("Audio")){
+                message.setReplyMarkup(getKeyboard(Constants.AUDIO_COMMANDS));
             }
+            if(update.getMessage().getText().equals("Foto")){
+                message.setReplyMarkup(getKeyboard(Constants.PHOTO_COMMANDS));
+            }
+            if(update.getMessage().getText().equals("Video")){
+                message.setReplyMarkup(getKeyboard(Constants.VIDEO_COMMANDS));
+            }
+            if(update.getMessage().getText().equals("Testo")){
+                message.setReplyMarkup(getKeyboard(Constants.TEXT_COMMANDS));
+            }
+            message.setText("Scegli un opzione");
 
             try {
                 sendMessage(message);
@@ -46,13 +49,20 @@ public class MyBot extends TelegramLongPollingBot {
         }
     }
 
-    private ReplyKeyboardMarkup getKeyboard() {
-        List<List<String>> commands = new ArrayList<>();
+    private ReplyKeyboardMarkup getKeyboard(List<String> commands) {
+        List<List<String>> keyboardCommands = new ArrayList<>();
 
-        commands.add(getCommandRow("Ciao", "Ora"));
-        commands.add(getCommandRow("Data", "Foto"));
+        for(int i=0, j=0; i<commands.size()/2; i++){
+            keyboardCommands.add(getCommandRow(commands.get(j), commands.get(j+1)));
+            j+=2;
+        }
 
         ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
+        replyKeyboard.setKeyboard(getKeyboardRows(keyboardCommands));
+        return replyKeyboard;
+    }
+
+    private List<KeyboardRow> getKeyboardRows(List<List<String>> commands) {
         List<KeyboardRow> keyboardRows = new ArrayList<>();
         for(List<String> commandsRow : commands) {
             KeyboardRow keyboardRow = new KeyboardRow();
@@ -63,8 +73,7 @@ public class MyBot extends TelegramLongPollingBot {
             }
             keyboardRows.add(keyboardRow);
         }
-        replyKeyboard.setKeyboard(keyboardRows);
-        return replyKeyboard;
+        return keyboardRows;
     }
 
     private List<String> getCommandRow(String command1, String command2) {
@@ -75,13 +84,12 @@ public class MyBot extends TelegramLongPollingBot {
     }
 
     private String createResponse(Update update) {
-        String response = "Il messaggio inviato non corrisponde a nessuna funzione disponibile: "+update.getMessage().getText();
+        String response = "Il messaggio '" + update.getMessage().getText() + "' non corrisponde a nessuna funzione disponibile: ";
         switch (update.getMessage().getText()){
             case "Ciao": response = "Ciao Pacchio"; break;
             case "Ora": response = getTime(); break;
             case "Data": response = getDate(); break;
             case "Amore": response = "Ciao Marti " + "\u2764"; break;
-//            case "Img": return new SendMessage();
         }
         return response;
     }

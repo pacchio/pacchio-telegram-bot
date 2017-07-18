@@ -22,16 +22,16 @@ public abstract class TelegramLongPollingCommandBot extends TelegramLongPollingB
 
     /**
      * Creates a TelegramLongPollingCommandBot using default options
-     * Use ICommandRegistry's methods on this bot to register commands
+     * Use ICommandRegistry's methods on this bot to register COMMANDS
      */
     public TelegramLongPollingCommandBot() {
         this(ApiContext.getInstance(DefaultBotOptions.class));
     }
 
     /**
-     * Creates a TelegramLongPollingCommandBot with custom options and allowing commands with
+     * Creates a TelegramLongPollingCommandBot with custom options and allowing COMMANDS with
      * usernames
-     * Use ICommandRegistry's methods on this bot to register commands
+     * Use ICommandRegistry's methods on this bot to register COMMANDS
      * @param options Bot options
      */
     public TelegramLongPollingCommandBot(DefaultBotOptions options) {
@@ -40,9 +40,9 @@ public abstract class TelegramLongPollingCommandBot extends TelegramLongPollingB
 
     /**
      * Creates a TelegramLongPollingCommandBot
-     * Use ICommandRegistry's methods on this bot to register commands
+     * Use ICommandRegistry's methods on this bot to register COMMANDS
      * @param options Bot options
-     * @param allowCommandsWithUsername true to allow commands with parameters (default),
+     * @param allowCommandsWithUsername true to allow COMMANDS with parameters (default),
      *                                  false otherwise
      */
     public TelegramLongPollingCommandBot(DefaultBotOptions options, boolean allowCommandsWithUsername) {
@@ -64,9 +64,9 @@ public abstract class TelegramLongPollingCommandBot extends TelegramLongPollingB
     }
 
     /**
-     * Override this function in your bot implementation to filter messages with commands
+     * Override this function in your bot implementation to filter messages with COMMANDS
      *
-     * For example, if you want to prevent commands execution incoming from group chat:
+     * For example, if you want to prevent COMMANDS execution incoming from group chat:
      *   #
      *   # return !message.getChat().isGroupChat();
      *   #
@@ -116,7 +116,7 @@ public abstract class TelegramLongPollingCommandBot extends TelegramLongPollingB
     }
 
     /**
-     * Process all updates, that are not commands.
+     * Process all updates, that are not COMMANDS.
      * @warning Commands that have valid syntax but are not registered on this bot,
      * won't be forwarded to this method <b>if a default action is present</b>.
      *

@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
- * This class manages all the commands for a bot. You can register and deregister commands on demand
+ * This class manages all the COMMANDS for a bot. You can register and deregister COMMANDS on demand
  *
  * @author Timo Schulz (Mit0x2)
  */
@@ -23,7 +23,7 @@ public final class CommandRegistry implements ICommandRegistry {
 
     /**
      * Creates a Command registry
-     * @param allowCommandsWithUsername True to allow commands with username, false otherwise
+     * @param allowCommandsWithUsername True to allow COMMANDS with username, false otherwise
      * @param botUsername Bot username
      */
     public CommandRegistry(boolean allowCommandsWithUsername, String botUsername) {

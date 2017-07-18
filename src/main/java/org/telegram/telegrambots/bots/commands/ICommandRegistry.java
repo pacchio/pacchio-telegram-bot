@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
- * This Interface represents the gateway for registering and deregistering commands.
+ * This Interface represents the gateway for registering and deregistering COMMANDS.
  *
  * @author Timo Schulz (Mit0x2)
  */
@@ -32,9 +32,9 @@ public interface ICommandRegistry {
     boolean register(BotCommand botCommand);
 
     /**
-     * register multiple commands
+     * register multiple COMMANDS
      *
-     * @param botCommands commands to register
+     * @param botCommands COMMANDS to register
      * @return map with results of the command register per command
      */
     Map<BotCommand, Boolean> registerAll(BotCommand... botCommands);
@@ -48,17 +48,17 @@ public interface ICommandRegistry {
     boolean deregister(BotCommand botCommand);
 
     /**
-     * deregister multiple commands
+     * deregister multiple COMMANDS
      *
-     * @param botCommands commands to deregister
+     * @param botCommands COMMANDS to deregister
      * @return map with results of the command deregistered per command
      */
     Map<BotCommand, Boolean> deregisterAll(BotCommand... botCommands);
 
     /**
-     * get a collection of all registered commands
+     * get a collection of all registered COMMANDS
      *
-     * @return a collection of registered commands
+     * @return a collection of registered COMMANDS
      */
     Collection<BotCommand> getRegisteredCommands();
 
