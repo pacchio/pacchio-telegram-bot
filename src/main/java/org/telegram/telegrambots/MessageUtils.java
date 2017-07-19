@@ -17,10 +17,12 @@ class MessageUtils {
         SendMessage sendMessage = new SendMessage();
         switch (update.getMessage().getText()){
             case "\\start": return createKeyboardMessage(Constants.INIT_COMMANDS);
+
             case "Audio":   return createKeyboardMessage(Constants.AUDIO_COMMANDS);
             case "Foto":    return createKeyboardMessage(Constants.PHOTO_COMMANDS);
             case "Video":   return createKeyboardMessage(Constants.VIDEO_COMMANDS);
             case "Testo":   return createKeyboardMessage(Constants.TEXT_COMMANDS);
+
             case "Ciao":    return sendMessage.setText("Ciao Pacchio");
             case "Ora":     return sendMessage.setText(getTime());
             case "Data":    return sendMessage.setText(getDate());
