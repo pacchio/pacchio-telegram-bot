@@ -3,6 +3,7 @@ package org.telegram.telegrambots;
 import static org.telegram.telegrambots.MessageUtils.createResponse;
 
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -14,22 +15,28 @@ public class MyBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             System.out.println("Message received: "+update.getMessage().getText());
 
-            SendMessage message = getSendMessage(update);
+            Object message = getMessage(update);
 
             try {
-                sendMessage(message);
+                if(message instanceof SendMessage) {
+                    ((SendMessage) message).setChatId(update.getMessage().getChatId());
+                    sendMessage((SendMessage) message);
+                    System.out.println("Message sent: "+((SendMessage)message).getText());
+                }
+                else if(message instanceof SendPhoto){
+                    ((SendPhoto) message).setChatId(update.getMessage().getChatId());
+                    sendPhoto((SendPhoto) message);
+                    System.out.println("Message sent: "+((SendPhoto)message).getPhotoName());
+                }
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
-            System.out.println("Message sent: "+message.getText());
 
         }
     }
 
-    private SendMessage getSendMessage(Update update) {
-        SendMessage message = createResponse(update);
-        message.setChatId(update.getMessage().getChatId());
-        return message;
+    private Object getMessage(Update update) {
+        return createResponse(update);
     }
 
     @Override
