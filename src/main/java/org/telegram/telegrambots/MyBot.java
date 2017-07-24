@@ -1,7 +1,5 @@
 package org.telegram.telegrambots;
 
-import static org.telegram.telegrambots.MessageUtils.createResponse;
-
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.api.objects.Update;
@@ -36,7 +34,7 @@ public class MyBot extends TelegramLongPollingBot {
     }
 
     private Object getMessage(Update update) {
-        return createResponse(update);
+        return new MessageManager().createResponse(update);
     }
 
     @Override

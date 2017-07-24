@@ -8,9 +8,9 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 
-class KeyboardUtils {
+class KeyboardManager {
 
-    static SendMessage createKeyboardMessage(List<String> commands){
+    SendMessage createKeyboardMessage(List<String> commands){
         SendMessage sendMessage = new SendMessage();
 
         sendMessage.setReplyMarkup(getKeyboard(commands));
@@ -19,7 +19,7 @@ class KeyboardUtils {
         return sendMessage;
     }
 
-    private static ReplyKeyboardMarkup getKeyboard(List<String> commands) {
+    private ReplyKeyboardMarkup getKeyboard(List<String> commands) {
         List<List<String>> keyboardCommands = new ArrayList<>();
 
         for(int i=0, j=0; i<commands.size()/2; i++){
@@ -32,7 +32,7 @@ class KeyboardUtils {
         return replyKeyboard;
     }
 
-    private static List<KeyboardRow> getKeyboardRows(List<List<String>> commands) {
+    private List<KeyboardRow> getKeyboardRows(List<List<String>> commands) {
         List<KeyboardRow> keyboardRows = new ArrayList<>();
         for(List<String> commandsRow : commands) {
             KeyboardRow keyboardRow = new KeyboardRow();
@@ -46,7 +46,7 @@ class KeyboardUtils {
         return keyboardRows;
     }
 
-    private static List<String> getCommandRow(String command1, String command2) {
+    private List<String> getCommandRow(String command1, String command2) {
         List<String> commandsRow = new ArrayList<>();
         commandsRow.add(command1);
         commandsRow.add(command2);
