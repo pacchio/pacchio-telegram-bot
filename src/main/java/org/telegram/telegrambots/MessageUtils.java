@@ -19,7 +19,7 @@ class MessageUtils {
     static Object createResponse(Update update) {
         SendMessage sendMessage = new SendMessage();
         switch (update.getMessage().getText()){
-            case "\\start": return createKeyboardMessage(Constants.INIT_COMMANDS);
+            case "/start": return createKeyboardMessage(Constants.INIT_COMMANDS);
 
             case "Audio":   return createKeyboardMessage(Constants.AUDIO_COMMANDS);
             case "Foto":    return createKeyboardMessage(Constants.PHOTO_COMMANDS);
@@ -29,12 +29,12 @@ class MessageUtils {
             case "Ciao":            return sendMessage.setText("Ciao Bambolina" + Emoji.FACE_THROWING_A_KISS);
             case "Che ore sono?":   return sendMessage.setText(getTime());
             case "Che giorno è?":   return sendMessage.setText(getDate());
-            case "Pajas":           return sendMessage.setText(getInsult());
+            case "Pajas":           return sendMessage.setText(getTrashSentence());
             case "Ti amo":          return sendMessage.setText("Anche io" + Emoji.SMILING_FACE_WITH_HEART_SHAPED_EYES + Emoji.RED_HEARTH);
 
-            case "Random":  return new SendPhoto().setNewPhoto(new File(Constants.PHOTO_FOLDER + getRandomPhoto()));
-            case "Gatti":   return new SendPhoto().setNewPhoto(new File(Constants.PHOTO_FOLDER + "meme1.jpeg"));
-            case "Meme":    return new SendPhoto().setNewPhoto(new File(Constants.PHOTO_FOLDER + "meme1.jpeg"));
+            case "Random":  return getSendPhoto(Constants.RANDOM_PHOTOS_FOLDER);
+            case "Gatti":   return getSendPhoto(Constants.CAT_PHOTOS_FOLDER);
+            case "Meme":    return getSendPhoto(Constants.MEME_PHOTOS_FOLDER);
 
             case "Indietro": return createKeyboardMessage(Constants.INIT_COMMANDS);
 
@@ -42,19 +42,27 @@ class MessageUtils {
         }
     }
 
-    private static String getRandomPhoto() {
-        File folder = new File(Constants.PHOTO_FOLDER);
+    private static Object getSendPhoto(String folderPath) {
+        String photoPath = getRandomPhoto(folderPath);
+        if(photoPath != null){
+            return new SendPhoto().setNewPhoto(new File(photoPath));
+        }
+        return new SendMessage().setText("Nessuna foto disponibile");
+    }
+
+    private static String getRandomPhoto(String folderPath) {
+        File folder = new File(folderPath);
         File[] listOfFiles = folder.listFiles();
 
-        if (listOfFiles != null) {
+        if (listOfFiles != null && listOfFiles.length > 0) {
             int random = new Random().nextInt(listOfFiles.length);
-            return listOfFiles[random].getName();
+            return listOfFiles[random].getAbsolutePath();
         }
         return null;
     }
 
-    private static String getInsult() {
-        return Constants.RICCANZA.get(new Random().nextInt(4));
+    private static String getTrashSentence() {
+        return Constants.RISPOSTE_TRASH.get(new Random().nextInt(4));
     }
 
     private static String getTime(){
