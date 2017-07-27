@@ -12,29 +12,26 @@ public class MyBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             System.out.println("Message received: "+update.getMessage().getText());
-
-            Object message = getMessage(update);
-
-            try {
-                if(message instanceof SendMessage) {
-                    ((SendMessage) message).setChatId(update.getMessage().getChatId());
-                    sendMessage((SendMessage) message);
-                    System.out.println("Message sent: "+((SendMessage)message).getText());
-                }
-                else if(message instanceof SendPhoto){
-                    ((SendPhoto) message).setChatId(update.getMessage().getChatId());
-                    sendPhoto((SendPhoto) message);
-                    System.out.println("Message sent: "+((SendPhoto)message).getPhotoName());
-                }
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-
+            Object message = new MessageDispatcher().createResponse(update);
+            inviaMessaggio(update.getMessage().getChatId(), message);
         }
     }
 
-    private Object getMessage(Update update) {
-        return new MessageManager().createResponse(update);
+    void inviaMessaggio(Long chatId, Object message) {
+        try {
+            if(message instanceof SendMessage) {
+                ((SendMessage) message).setChatId(chatId);
+                sendMessage((SendMessage) message);
+                System.out.println("Message sent: "+((SendMessage)message).getText());
+            }
+            else if(message instanceof SendPhoto){
+                ((SendPhoto) message).setChatId(chatId);
+                sendPhoto((SendPhoto) message);
+                System.out.println("Message sent: "+((SendPhoto)message).getPhotoName());
+            }
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
