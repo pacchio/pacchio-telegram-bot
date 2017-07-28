@@ -13,7 +13,7 @@ class MessageManager {
         return sendMessage;
     }
 
-    public Object getSendPhoto(String folderPath) {
+    Object getSendPhoto(String folderPath) {
         String photoPath = getRandomPhoto(folderPath);
         if(photoPath != null){
             return new SendPhoto().setNewPhoto(new File(photoPath));

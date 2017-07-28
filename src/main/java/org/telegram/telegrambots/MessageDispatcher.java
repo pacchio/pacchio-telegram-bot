@@ -1,5 +1,7 @@
 package org.telegram.telegrambots;
 
+import static org.telegram.telegrambots.Constants.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -31,9 +33,9 @@ class MessageDispatcher {
             case "Gatti":   return messageManager.getSendPhoto(Constants.CAT_PHOTOS_FOLDER);
             case "Meme":    return messageManager.getSendPhoto(Constants.MEME_PHOTOS_FOLDER);
 
-            case "Sasso":   return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), "Sasso"));
-            case "Carta":   return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), "Carta"));
-            case "Forbice": return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), "Forbice"));
+            case SASSO:   return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), SASSO));
+            case CARTA:   return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), CARTA));
+            case FORBICE: return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), FORBICE));
 
             case "Indietro": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
 
@@ -42,41 +44,27 @@ class MessageDispatcher {
     }
 
     private String getGame(Long chatId, String sceltaGiocatore) {
-        List<MorraCinese> sceltePossibili = Arrays.asList(MorraCinese.SASSO, MorraCinese.CARTA, MorraCinese.FORBICE);
-        MorraCinese sceltaPc = sceltePossibili.get(new Random().nextInt(sceltePossibili.size()));
-        new MyBot().inviaMessaggio(chatId, messageManager.createSendMessage(creaRispostaConEmoji(sceltaPc)));
+        List<String> sceltePossibili = Arrays.asList(SASSO, CARTA, FORBICE);
+        String sceltaPc = sceltePossibili.get(new Random().nextInt(sceltePossibili.size()));
+        new MyBot().inviaMessaggio(chatId, messageManager.createSendMessage(sceltaPc));
 
-        if(MorraCinese.fromString(sceltaGiocatore).equals(sceltaPc)){
+        if(sceltaGiocatore.equals(sceltaPc)){
             return "PAREGGIO" + Emoji.SMILING_FACE_WITH_OPEN_MOUTH_AND_SMILING_EYES;
         }
         else{
             switch (sceltaGiocatore){
-                case "Sasso": return sceltaPc.equals(MorraCinese.FORBICE) ? "HAI VINTO\n"
+                case SASSO: return sceltaPc.equals(FORBICE) ? "HAI VINTO\n"
                         + getRandomSentence(Constants.RISPOSTE_VITTORIA) : "HAI PERSO\n"
                         + getRandomSentence(Constants.RISPOSTE_SCONFITTA);
-                case "Carta": return sceltaPc.equals(MorraCinese.SASSO) ? "HAI VINTO\n"
+                case CARTA: return sceltaPc.equals(SASSO) ? "HAI VINTO\n"
                         + getRandomSentence(Constants.RISPOSTE_VITTORIA) : "HAI PERSO\n"
                         + getRandomSentence(Constants.RISPOSTE_SCONFITTA);
-                case "Forbice": return sceltaPc.equals(MorraCinese.CARTA) ? "HAI VINTO\n"
+                case FORBICE: return sceltaPc.equals(CARTA) ? "HAI VINTO\n"
                         + getRandomSentence(Constants.RISPOSTE_VITTORIA) : "HAI PERSO\n"
                         + getRandomSentence(Constants.RISPOSTE_SCONFITTA);
             }
         }
         return null;
-    }
-
-    private String creaRispostaConEmoji(MorraCinese sceltaPc) {
-        String risposta = "";
-        if(sceltaPc == MorraCinese.SASSO){
-            risposta = MorraCinese.SASSO.getDescrizione() + Emoji.RAISED_FIST;
-        }
-        else if(sceltaPc == MorraCinese.CARTA){
-            risposta = MorraCinese.CARTA.getDescrizione() + Emoji.RAISED_HAND;
-        }
-        else if(sceltaPc == MorraCinese.FORBICE){
-            risposta = MorraCinese.FORBICE.getDescrizione() + Emoji.VICTORY_HAND;
-        }
-        return risposta;
     }
 
     private String getRandomSentence(List<String> listaRisposte) {

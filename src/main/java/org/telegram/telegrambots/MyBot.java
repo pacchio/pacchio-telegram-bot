@@ -11,10 +11,17 @@ public class MyBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            System.out.println("Message received: "+update.getMessage().getText());
+            System.out.println(getReceivedMessage(update));
             Object message = new MessageDispatcher().createResponse(update);
             inviaMessaggio(update.getMessage().getChatId(), message);
         }
+    }
+
+    private String getReceivedMessage(Update update) {
+        return "Message received from "
+                + update.getMessage().getChat().getFirstName() + " "
+                + update.getMessage().getChat().getLastName() + " : "
+                + update.getMessage().getText();
     }
 
     void inviaMessaggio(Long chatId, Object message) {
