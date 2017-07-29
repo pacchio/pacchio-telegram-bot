@@ -1,7 +1,6 @@
 package org.telegram.telegrambots.updatesreceivers;
 
 import com.google.inject.Inject;
-
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.ssl.SSLContextConfigurator;
 import org.glassfish.grizzly.ssl.SSLEngineConfigurator;

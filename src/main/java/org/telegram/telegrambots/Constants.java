@@ -9,9 +9,12 @@ import java.util.List;
 public class Constants {
     public static final int SOCKET_TIMEOUT = 75 * 1000;
 
-    static String RANDOM_PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\Foto\\Random\\";
-    static String CAT_PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\Foto\\Gatti\\";
-    static String MEME_PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\Foto\\Meme\\";
+    static String RANDOM_PHOTOS_FOLDER = "/home/pi/bot-resources/random/";
+//    static String RANDOM_PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\Foto\\Random\\";
+    static String CAT_PHOTOS_FOLDER = "/home/pi/bot-resources/gatti/";
+//    static String CAT_PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\Foto\\Gatti\\";
+    static String MEME_PHOTOS_FOLDER = "/home/pi/bot-resources/meme/";
+//    static String MEME_PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\Foto\\Meme\\";
 
     final static String SASSO = "Sasso\u270A";
     final static String CARTA = "Carta\u270B";

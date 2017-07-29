@@ -18,7 +18,7 @@ class MessageManager {
         if(photoPath != null){
             return new SendPhoto().setNewPhoto(new File(photoPath));
         }
-        return new SendMessage().setText("Nessuna foto disponibile");
+        return new SendMessage().setText("Nessuna foto disponibile ( " + folderPath + " )");
     }
 
     private String getRandomPhoto(String folderPath) {
