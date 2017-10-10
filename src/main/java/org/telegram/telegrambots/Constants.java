@@ -25,7 +25,7 @@ public class Constants {
     static List<String> RISPOSTE_SCONFITTA = Arrays.asList("Dai magari la prossima volta" + FACE_THROWING_A_KISS, "Ritenta, sarai più fortunato", "Ahahahahahaha, ciao dai", "Che scarso oh..." + FACE_WITH_TEARS_OF_JOY);
 
     static List<String> INIT_COMMANDS = Arrays.asList("Audio", "Foto", "Gioca", "Messaggiamo");
-    static List<String> AUDIO_COMMANDS = Arrays.asList("xxx", "yyy", "zzz", "Indietro");
+    static List<String> AUDIO_COMMANDS = Arrays.asList("Cerca video", "Indietro");
     static List<String> PHOTO_COMMANDS = Arrays.asList("Meme", "Gatti", "Random", "Indietro");
     static List<String> PLAY_COMMANDS = Arrays.asList(SASSO, CARTA, FORBICE, "Indietro");
     static List<String> TEXT_COMMANDS = Arrays.asList("Ciao", "Che ore sono?", "Che giorno è?", "Pajas", "Ti amo", "Indietro");

@@ -2,11 +2,17 @@ package org.telegram.telegrambots;
 
 import static org.telegram.telegrambots.Constants.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.google.api.services.youtube.model.SearchListResponse;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.myYoutubeActivity.DownloadAndConvert;
+import org.telegram.telegrambots.myYoutubeActivity.MySingletonMap;
+import org.telegram.telegrambots.myYoutubeActivity.YoutubeService;
 
 class MessageDispatcher {
     
@@ -16,7 +22,7 @@ class MessageDispatcher {
      Object createResponse(Update update) {
 
         switch (update.getMessage().getText()){
-            case "/start": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
+            case "/startAudio": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
 
             case "Audio":   return keyboardManager.createKeyboardMessage(Constants.AUDIO_COMMANDS);
             case "Foto":    return keyboardManager.createKeyboardMessage(Constants.PHOTO_COMMANDS);
@@ -37,9 +43,57 @@ class MessageDispatcher {
             case CARTA:   return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), CARTA));
             case FORBICE: return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), FORBICE));
 
+            case "Cerca video": return messageManager.createSendMessage("Scrivi il video da cercare preceduto da '#'");
+
             case "Indietro": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
 
-            default: return messageManager.createSendMessage("Il messaggio '" + update.getMessage().getText() + "' non corrisponde ad alcuna funzione");
+            default:
+                return controllaDefault(update.getMessage().getText());
+        }
+    }
+
+    private Object controllaDefault(String message) {
+        if(message.startsWith("#")){
+            return messageManager.createSendMessage(creaResponseRicercaDaYoutube(message.substring(1)));
+        }
+        else if(message.startsWith("-")){
+            Object responseDownload = creaResponseDownloadAudio(message.substring(1));
+            if(responseDownload instanceof File){
+                return messageManager.getSendAudio((File) responseDownload);
+            }
+            else if(responseDownload instanceof String) {
+                return messageManager.createSendMessage((String) responseDownload);
+            }
+        }
+        else if(message.startsWith("!")){
+            Object responseDownload = creaResponseDownloadVideo(message.substring(1));
+            if(responseDownload instanceof File){
+                return messageManager.getSendAudio((File) responseDownload);
+            }
+            else if(responseDownload instanceof String) {
+                return messageManager.createSendMessage((String) responseDownload);
+            }
+        }
+        return messageManager.createSendMessage("Il messaggio '" + message + "' non corrisponde ad alcuna funzione");
+    }
+
+    private Object creaResponseDownloadAudio(String index) {
+        DownloadAndConvert downloadAndConvert = new DownloadAndConvert();
+		return downloadAndConvert.startAudio(MySingletonMap.getInstance().getMap().get(Integer.parseInt(index)));
+    }
+
+    private Object creaResponseDownloadVideo(String index) {
+        DownloadAndConvert downloadAndConvert = new DownloadAndConvert();
+        return downloadAndConvert.startVideo(MySingletonMap.getInstance().getMap().get(Integer.parseInt(index)));
+    }
+
+    private String creaResponseRicercaDaYoutube(String chiaveDiRicerca) {
+        YoutubeService youtubeService = new YoutubeService();
+        try {
+            SearchListResponse response = youtubeService.ricercaSuYoutube(chiaveDiRicerca);
+            return youtubeService.visualizzaListaRisultati(response);
+        } catch (IOException e) {
+            return "Errore durante la ricerca";
         }
     }
 

@@ -1,7 +1,9 @@
 package org.telegram.telegrambots;
 
+import org.telegram.telegrambots.api.methods.send.SendAudio;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.api.methods.send.SendVideo;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -35,6 +37,18 @@ public class MyBot extends TelegramLongPollingBot {
                 ((SendPhoto) message).setChatId(chatId);
                 sendPhoto((SendPhoto) message);
                 System.out.println("Message sent: "+((SendPhoto)message).getPhotoName());
+            }
+            else if(message instanceof SendAudio){
+                ((SendAudio) message).setChatId(chatId);
+                sendMessage(new SendMessage().setText("Sto inviando...").setChatId(chatId));
+                sendAudio((SendAudio) message);
+                System.out.println("Message sent: "+((SendAudio)message).getAudioName());
+            }
+            else if(message instanceof SendVideo){
+                ((SendVideo) message).setChatId(chatId);
+                sendMessage(new SendMessage().setText("Sto inviando...").setChatId(chatId));
+                sendVideo((SendVideo) message);
+                System.out.println("Message sent: "+((SendVideo)message).getVideoName());
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
