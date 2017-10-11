@@ -44,8 +44,6 @@ class MessageDispatcher {
             case CARTA:   return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), CARTA));
             case FORBICE: return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), FORBICE));
 
-            case "c": return messageManager.getSendAudio(new File("D:\\Users\\arx50054\\Desktop\\prove\\Eminem - Love The Way You Lie ft. Rihanna.mp3"));
-
             case "Cerca su YouTube": return messageManager.createSendMessage("Scrivi il video da cercare preceduto da '#'");
 
             case "Indietro": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
