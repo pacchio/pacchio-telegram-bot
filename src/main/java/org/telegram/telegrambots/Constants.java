@@ -24,9 +24,16 @@ public class Constants {
     static List<String> RISPOSTE_VITTORIA = Arrays.asList("Madonna, che forte...", "Proprio bravo!", "Tanta roba...", "Bella giocata!");
     static List<String> RISPOSTE_SCONFITTA = Arrays.asList("Dai magari la prossima volta" + FACE_THROWING_A_KISS, "Ritenta, sarai più fortunato", "Ahahahahahaha, ciao dai", "Che scarso oh..." + FACE_WITH_TEARS_OF_JOY);
 
-    static List<String> INIT_COMMANDS = Arrays.asList("Audio", "Foto", "Gioca", "Messaggiamo");
-    static List<String> AUDIO_COMMANDS = Arrays.asList("Cerca video", "Indietro");
+    static List<String> INIT_COMMANDS = Arrays.asList("Audio/Video", "Foto", "Gioca", "Messaggiamo");
+    static List<String> AUDIO_COMMANDS = Arrays.asList("Cerca su YouTube", "Indietro");
     static List<String> PHOTO_COMMANDS = Arrays.asList("Meme", "Gatti", "Random", "Indietro");
     static List<String> PLAY_COMMANDS = Arrays.asList(SASSO, CARTA, FORBICE, "Indietro");
     static List<String> TEXT_COMMANDS = Arrays.asList("Ciao", "Che ore sono?", "Che giorno è?", "Pajas", "Ti amo", "Indietro");
+
+    public static final String MESSAGE_AUDIO_FAILED = "Impossibile convertire questo video " + Emoji.CRYING_FACE;
+    public static final String MESSAGE_VIDEO_FAILED = "Impossibile scaricare questo video " + Emoji.CRYING_FACE;
+
+    static final String MESSAGE_INVIA_AUDIO = "Sto inviando l'audio... abbi pazienza! " + Emoji.KISSING_CAT_FACE_WITH_CLOSED_EYES;
+    static final String MESSAGE_INVIA_AUDIO_IMPROVVISATO = "Scusa ma il video è troppo grande, quindi ti invio solamente l'audio " + Emoji.DISAPPOINTED_FACE;
+    static final String MESSAGE_INVIA_VIDEO = "Sto inviando il video... abbi pazienza! " + Emoji.FACE_THROWING_A_KISS;
 }

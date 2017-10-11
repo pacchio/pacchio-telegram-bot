@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static org.telegram.telegrambots.Constants.MESSAGE_AUDIO_FAILED;
+import static org.telegram.telegrambots.Constants.MESSAGE_VIDEO_FAILED;
+
 public class DownloadAndConvert {
 
 	private static String path = "D:\\Users\\arx50054\\Desktop\\prove\\";
@@ -11,66 +14,63 @@ public class DownloadAndConvert {
 	public Object startAudio(String url){
 		try {
 			AppManagedDownload appManagedDownload = new AppManagedDownload();
-			List<String> videoTitles = appManagedDownload.download(url, path);
+			List<File> videoTitles = appManagedDownload.download(url, path);
 			AppManageMediaConverter appManageMediaConverter = new AppManageMediaConverter();
-			Boolean conversionResult = false;
-			File target = null;
-			for (String videoTitle : videoTitles) {
-				System.out.println("Trying with " + videoTitle);
-				File source = new File(path + videoTitle);
-				target = builtTargetForMp3(path, videoTitle);
-				if (target == null) {
-					return "Il formato del video non è in uno dei formati accettati, quindi non potrà essere convertito!";
-				} else {
+			for (File file : videoTitles) {
+				System.out.println("Trying with " + file);
+				File source = new File(file.getAbsolutePath());
+				File target = builtTargetForMp3(file.getAbsolutePath());
+				if(target != null) {
 					try {
-						conversionResult = appManageMediaConverter.convertToMp3(source, target);
+						Boolean conversionResult = appManageMediaConverter.convertToMp3(source, target);
+						if(conversionResult){
+							eliminaFile(file.getAbsolutePath());
+							return target;
+						}
 					} catch (Exception e) {
 						System.out.println(e.getMessage());
 					}
 				}
-				eliminaFile(videoTitle, path);
+				else {
+					return new File(file.getAbsolutePath());
+				}
 			}
-			if(conversionResult){
-				return target;
-			}
-			else{
-				return "Download o conversione falliti";
-			}
+			return MESSAGE_AUDIO_FAILED;
 		}
 		catch(Exception e){
-			return e.getMessage();
+			return MESSAGE_AUDIO_FAILED;
 		}
 	}
 
 	public Object startVideo(String url){
 		try {
 			AppManagedDownload appManagedDownload = new AppManagedDownload();
-			List<String> videoTitles = appManagedDownload.download(url, path);
-			for (String videoTitle : videoTitles) {
-				System.out.println("Trying with " + videoTitle);
-				if (videoTitle.contains(".mp4")) {
-					return new File(path + videoTitle);
+			List<File> videoTitles = appManagedDownload.download(url, path);
+			for (File file : videoTitles) {
+				System.out.println("Trying with " + file.getName());
+				if (new File(file.getAbsolutePath()).canExecute() && file.length() < 40000000L) {
+					return new File(file.getAbsolutePath());
 				}
 			}
-			return "Download non riuscito correttamente";
+			return MESSAGE_VIDEO_FAILED;
 		}
 		catch(Exception e){
-			return e.getMessage();
+			return MESSAGE_VIDEO_FAILED;
 		}
 	}
 
-	private File builtTargetForMp3(String path, String videoTitle){
-		if(videoTitle.contains(".mp4")) {
-			return new File(path + videoTitle.replace(".mp4", ".mp3"));
+	private File builtTargetForMp3(String fullPath){
+		if(fullPath.contains(".mp4")) {
+			return new File(fullPath.replace(".mp4", ".mp3"));
 		}
-		else if(videoTitle.contains(".avi")) {
-			return new File(path + videoTitle.replace(".avi", ".mp3"));
+		else if(fullPath.contains(".avi")) {
+			return new File(fullPath.replace(".avi", ".mp3"));
 		}
 		return null;
 	}
 
-	private void eliminaFile(String videoTitle, String path) throws IOException {
-		File file = new File(path + videoTitle);
+	private void eliminaFile(String fullPath) throws IOException {
+		File file = new File(fullPath);
 		try {
 			Boolean deleted = file.delete();
 			if(deleted){

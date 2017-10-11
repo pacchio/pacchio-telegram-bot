@@ -26,7 +26,7 @@ public class MyBot extends TelegramLongPollingBot {
                 + update.getMessage().getText();
     }
 
-    void inviaMessaggio(Long chatId, Object message) {
+    public void inviaMessaggio(Long chatId, Object message) {
         try {
             if(message instanceof SendMessage) {
                 ((SendMessage) message).setChatId(chatId);
@@ -40,18 +40,22 @@ public class MyBot extends TelegramLongPollingBot {
             }
             else if(message instanceof SendAudio){
                 ((SendAudio) message).setChatId(chatId);
-                sendMessage(new SendMessage().setText("Sto inviando...").setChatId(chatId));
                 sendAudio((SendAudio) message);
                 System.out.println("Message sent: "+((SendAudio)message).getAudioName());
             }
             else if(message instanceof SendVideo){
                 ((SendVideo) message).setChatId(chatId);
-                sendMessage(new SendMessage().setText("Sto inviando...").setChatId(chatId));
                 sendVideo((SendVideo) message);
                 System.out.println("Message sent: "+((SendVideo)message).getVideoName());
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
+            try {
+                sendMessage(new SendMessage().setChatId(chatId).setText("Errore durante l'invio del messaggio, video troppo pesante! " + Emoji.ANGRY_FACE));
+                System.out.println("Message sent: ERROR");
+            } catch (TelegramApiException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 

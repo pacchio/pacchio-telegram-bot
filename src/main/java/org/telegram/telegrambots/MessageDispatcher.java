@@ -9,22 +9,23 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.google.api.services.youtube.model.SearchListResponse;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.myYoutubeActivity.DownloadAndConvert;
 import org.telegram.telegrambots.myYoutubeActivity.MySingletonMap;
 import org.telegram.telegrambots.myYoutubeActivity.YoutubeService;
 
 class MessageDispatcher {
-    
-     private KeyboardManager keyboardManager = new KeyboardManager();
+
+    private KeyboardManager keyboardManager = new KeyboardManager();
      private MessageManager messageManager = new MessageManager();
 
      Object createResponse(Update update) {
 
         switch (update.getMessage().getText()){
-            case "/startAudio": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
+            case "/start": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
 
-            case "Audio":   return keyboardManager.createKeyboardMessage(Constants.AUDIO_COMMANDS);
+            case "Audio/Video":   return keyboardManager.createKeyboardMessage(Constants.AUDIO_COMMANDS);
             case "Foto":    return keyboardManager.createKeyboardMessage(Constants.PHOTO_COMMANDS);
             case "Gioca":   return keyboardManager.createKeyboardMessage(Constants.PLAY_COMMANDS);
             case "Messaggiamo":   return keyboardManager.createKeyboardMessage(Constants.TEXT_COMMANDS);
@@ -43,38 +44,50 @@ class MessageDispatcher {
             case CARTA:   return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), CARTA));
             case FORBICE: return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), FORBICE));
 
-            case "Cerca video": return messageManager.createSendMessage("Scrivi il video da cercare preceduto da '#'");
+            case "c": return messageManager.getSendAudio(new File("D:\\Users\\arx50054\\Desktop\\prove\\Eminem - Love The Way You Lie ft. Rihanna.mp3"));
+
+            case "Cerca su YouTube": return messageManager.createSendMessage("Scrivi il video da cercare preceduto da '#'");
 
             case "Indietro": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
 
-            default:
-                return controllaDefault(update.getMessage().getText());
+            default: return controllaDefault(update.getMessage());
         }
     }
 
-    private Object controllaDefault(String message) {
-        if(message.startsWith("#")){
-            return messageManager.createSendMessage(creaResponseRicercaDaYoutube(message.substring(1)));
+    private Object controllaDefault(Message message) {
+        MyBot myBot = new MyBot();
+        if(message.getText().startsWith("#")){
+            return messageManager.createSendMessage(creaResponseRicercaDaYoutube(message.getText().substring(1)));
         }
-        else if(message.startsWith("-")){
-            Object responseDownload = creaResponseDownloadAudio(message.substring(1));
+        else if(message.getText().startsWith("-")){
+            myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage("Sto scaricando..."));
+            Object responseDownload = creaResponseDownloadAudio(message.getText().substring(1));
             if(responseDownload instanceof File){
+                myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage(MESSAGE_INVIA_AUDIO));
                 return messageManager.getSendAudio((File) responseDownload);
             }
             else if(responseDownload instanceof String) {
                 return messageManager.createSendMessage((String) responseDownload);
             }
         }
-        else if(message.startsWith("!")){
-            Object responseDownload = creaResponseDownloadVideo(message.substring(1));
+        else if(message.getText().startsWith("!")){
+            myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage("Sto scaricando..."));
+            Object responseDownload = creaResponseDownloadVideo(message.getText().substring(1));
             if(responseDownload instanceof File){
-                return messageManager.getSendAudio((File) responseDownload);
+                if(((File) responseDownload).getName().contains(".webm")){
+                    myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage(MESSAGE_INVIA_AUDIO_IMPROVVISATO));
+                    return messageManager.getSendAudio((File) responseDownload);
+                }
+                else{
+                    myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage(MESSAGE_INVIA_VIDEO));
+                    return messageManager.getSendVideo((File) responseDownload);
+                }
             }
             else if(responseDownload instanceof String) {
                 return messageManager.createSendMessage((String) responseDownload);
             }
         }
-        return messageManager.createSendMessage("Il messaggio '" + message + "' non corrisponde ad alcuna funzione");
+        return messageManager.createSendMessage("Il messaggio '" + message.getText() + "' non corrisponde ad alcuna funzione");
     }
 
     private Object creaResponseDownloadAudio(String index) {
@@ -93,7 +106,7 @@ class MessageDispatcher {
             SearchListResponse response = youtubeService.ricercaSuYoutube(chiaveDiRicerca);
             return youtubeService.visualizzaListaRisultati(response);
         } catch (IOException e) {
-            return "Errore durante la ricerca";
+            return "Errore durante la ricerca " + Emoji.CRYING_CAT_FACE;
         }
     }
 

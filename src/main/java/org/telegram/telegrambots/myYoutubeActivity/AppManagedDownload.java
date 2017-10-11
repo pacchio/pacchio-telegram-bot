@@ -14,6 +14,7 @@ import com.github.axet.wget.info.ex.DownloadInterruptedError;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,7 +131,7 @@ public class AppManagedDownload {
 		}
 	}
 
-	public List<String> download(String url, String path) {
+	public List<File> download(String url, String path) {
 		File destinationTarget = new File(path);
 
 		try {
@@ -146,13 +147,13 @@ public class AppManagedDownload {
 			VGetParser user = null;
 
 			// create proper html parser depends on url
-//			user = VGet.parser(web);
+			user = VGet.parser(web);
 
 			// download limited video quality from youtube
 			// user = new YouTubeQParser(YoutubeQuality.p480);
 
 			// download mp4 format only, fail if non exist
-			user = new YouTubeMPGParser();
+//			user = new YouTubeMPGParser();
 
 			// create proper videoinfo to keep specific video information
 			VideoInfo videoinfo = user.info(web);
@@ -166,6 +167,12 @@ public class AppManagedDownload {
 			v.extract(user, stop, notify);
 
 			System.out.println("Title: " + videoinfo.getTitle());
+
+			List<File> videos = getVideosWithSameTitle(path, videoinfo.getTitle());
+			if(videos.size() > 0){
+				return videos;
+			}
+
 			List<VideoFileInfo> list = videoinfo.getInfo();
 			if (list != null) {
 				for (VideoFileInfo d : list) {
@@ -179,11 +186,10 @@ public class AppManagedDownload {
 			}
 
 			v.download(user, stop, notify);
-			List<String> results = new ArrayList<>();
 			for(VideoFileInfo videoFileInfo : videoinfo.getInfo()){
-				results.add(videoFileInfo.targetFile.getName());
+				videos.add(new File(path + videoFileInfo.targetFile.getName()));
 			}
-			return results;
+			return videos;
 		} catch (DownloadInterruptedError e) {
 			throw e;
 		} catch (RuntimeException e) {
@@ -191,5 +197,22 @@ public class AppManagedDownload {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private List<File> getVideosWithSameTitle(String path, String title) {
+		File folder = new File(path);
+		List<File> videos = new ArrayList<>();
+		if (folder.isDirectory()) {
+			File[] listOfFiles = folder.listFiles();
+			if(listOfFiles == null){
+				return videos;
+			}
+			for(File file : listOfFiles){
+				if(file.getName().contains(title)){
+					videos.add(file);
+				}
+			}
+		}
+		return videos;
 	}
 }
