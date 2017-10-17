@@ -16,12 +16,13 @@ public class SaveImage {
     }
 
     private static void download() throws MalformedURLException {
-        URL url = new URL("https://www.google.it/images/icons/material/system/1x/email_grey600_24dp.png");
-        String destinazionFolder = "D:\\Users\\arx50054\\Desktop\\Foto\\Random";
+        URL url = new URL("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTNrjGPA7-an7oZjH7X3crcDS8xF-6R2mqkCJ9162zXyR23s8h5v8QO0T1");
+        String destinazionFolder = "D:\\Users\\arx50054\\Desktop";
         try {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            String filename = url.getFile();
-            filename = filename.substring(filename.lastIndexOf('/') + 1);
+            String filename = "miele_biologico.jpg";
+//            String filename = url.getFile();
+//            filename = filename.substring(filename.lastIndexOf('/') + 1);
             FileOutputStream outputStream = new FileOutputStream(destinazionFolder + File.separator + filename);
             InputStream inputStream = connection.getInputStream();
 

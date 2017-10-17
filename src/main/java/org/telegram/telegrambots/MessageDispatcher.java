@@ -11,6 +11,10 @@ import java.util.*;
 import com.google.api.services.youtube.model.SearchListResponse;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.googleSearch.DowloadImageManager;
+import org.telegram.telegrambots.googleSearch.GResult;
+import org.telegram.telegrambots.googleSearch.GoogleSearchService;
+import org.telegram.telegrambots.googleSearch.ImageInfo;
 import org.telegram.telegrambots.myYoutubeActivity.DownloadAndConvert;
 import org.telegram.telegrambots.myYoutubeActivity.MySingletonMap;
 import org.telegram.telegrambots.myYoutubeActivity.YoutubeService;
@@ -30,21 +34,19 @@ class MessageDispatcher {
             case "Gioca":   return keyboardManager.createKeyboardMessage(Constants.PLAY_COMMANDS);
             case "Messaggiamo":   return keyboardManager.createKeyboardMessage(Constants.TEXT_COMMANDS);
 
-            case "Ciao":            return messageManager.createSendMessage("Ciao Bambolina" + Emoji.FACE_THROWING_A_KISS);
-            case "Che ore sono?":   return messageManager.createSendMessage(getTime());
-            case "Che giorno è?":   return messageManager.createSendMessage(getDate());
-            case "Pajas":           return messageManager.createSendMessage(getRandomSentence(Constants.RISPOSTE_TRASH));
-            case "Ti amo":          return messageManager.createSendMessage("Anche io" + Emoji.SMILING_FACE_WITH_HEART_SHAPED_EYES + Emoji.RED_HEARTH);
+            case "Ciao":            return messageManager.getSendMessage("Ciao Bambolina" + Emoji.FACE_THROWING_A_KISS);
+            case "Che ore sono?":   return messageManager.getSendMessage(getTime());
+            case "Che giorno è?":   return messageManager.getSendMessage(getDate());
+            case "Pajas":           return messageManager.getSendMessage(getRandomSentence(Constants.RISPOSTE_TRASH));
+            case "Ti amo":          return messageManager.getSendMessage("Anche io" + Emoji.SMILING_FACE_WITH_HEART_SHAPED_EYES + Emoji.RED_HEARTH);
 
-            case "Random":  return messageManager.getSendPhoto(Constants.RANDOM_PHOTOS_FOLDER);
-            case "Gatti":   return messageManager.getSendPhoto(Constants.CAT_PHOTOS_FOLDER);
-            case "Meme":    return messageManager.getSendPhoto(Constants.MEME_PHOTOS_FOLDER);
+            case "Cerca su Google": return messageManager.getSendMessage("Scrivi l'immagine da cercare preceduta da '?'");
 
-            case SASSO:   return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), SASSO));
-            case CARTA:   return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), CARTA));
-            case FORBICE: return messageManager.createSendMessage(getGame(update.getMessage().getChatId(), FORBICE));
+            case SASSO:   return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), SASSO));
+            case CARTA:   return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), CARTA));
+            case FORBICE: return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), FORBICE));
 
-            case "Cerca su YouTube": return messageManager.createSendMessage("Scrivi il video da cercare preceduto da '#'");
+            case "Cerca su YouTube": return messageManager.getSendMessage("Scrivi il video da cercare preceduto da '#'");
 
             case "Indietro": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
 
@@ -54,38 +56,45 @@ class MessageDispatcher {
 
     private Object controllaDefault(Message message) {
         MyBot myBot = new MyBot();
+        if(message.getText().startsWith("?")){
+            return messageManager.getSendPhoto(creaResponseRicercaDaGoogle(sistemaStrinaRicercaGoogle(message)));
+        }
         if(message.getText().startsWith("#")){
-            return messageManager.createSendMessage(creaResponseRicercaDaYoutube(message.getText().substring(1)));
+            return messageManager.getSendMessage(creaResponseRicercaDaYoutube(message.getText().substring(1)));
         }
         else if(message.getText().startsWith("-")){
-            myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage("Sto scaricando..."));
+            myBot.inviaMessaggio(message.getChatId(), messageManager.getSendMessage("Sto scaricando..."));
             Object responseDownload = creaResponseDownloadAudio(message.getText().substring(1));
             if(responseDownload instanceof File){
-                myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage(MESSAGE_INVIA_AUDIO));
+                myBot.inviaMessaggio(message.getChatId(), messageManager.getSendMessage(MESSAGE_INVIA_AUDIO));
                 return messageManager.getSendAudio((File) responseDownload);
             }
             else if(responseDownload instanceof String) {
-                return messageManager.createSendMessage((String) responseDownload);
+                return messageManager.getSendMessage((String) responseDownload);
             }
         }
         else if(message.getText().startsWith("!")){
-            myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage("Sto scaricando..."));
+            myBot.inviaMessaggio(message.getChatId(), messageManager.getSendMessage("Sto scaricando..."));
             Object responseDownload = creaResponseDownloadVideo(message.getText().substring(1));
             if(responseDownload instanceof File){
                 if(((File) responseDownload).getName().contains(".webm")){
-                    myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage(MESSAGE_INVIA_AUDIO_IMPROVVISATO));
+                    myBot.inviaMessaggio(message.getChatId(), messageManager.getSendMessage(MESSAGE_INVIA_AUDIO_IMPROVVISATO));
                     return messageManager.getSendAudio((File) responseDownload);
                 }
                 else{
-                    myBot.inviaMessaggio(message.getChatId(), messageManager.createSendMessage(MESSAGE_INVIA_VIDEO));
+                    myBot.inviaMessaggio(message.getChatId(), messageManager.getSendMessage(MESSAGE_INVIA_VIDEO));
                     return messageManager.getSendVideo((File) responseDownload);
                 }
             }
             else if(responseDownload instanceof String) {
-                return messageManager.createSendMessage((String) responseDownload);
+                return messageManager.getSendMessage((String) responseDownload);
             }
         }
-        return messageManager.createSendMessage("Il messaggio '" + message.getText() + "' non corrisponde ad alcuna funzione");
+        return messageManager.getSendMessage("Il messaggio '" + message.getText() + "' non corrisponde ad alcuna funzione");
+    }
+
+    private String sistemaStrinaRicercaGoogle(Message message) {
+        return message.getText().substring(1).replaceAll(" ", "%20");
     }
 
     private Object creaResponseDownloadAudio(String index) {
@@ -108,10 +117,24 @@ class MessageDispatcher {
         }
     }
 
+    private String creaResponseRicercaDaGoogle(String chiaveDiRicerca) {
+        GoogleSearchService googleSearchService = new GoogleSearchService();
+        DowloadImageManager dowloadImageManager = new DowloadImageManager();
+
+        try {
+            List<GResult> results = googleSearchService.search(chiaveDiRicerca);
+            Map<Integer, ImageInfo> resultsUrl = googleSearchService.creaListaRisultati(results);
+            ImageInfo imageInfo = resultsUrl.get(new Random().nextInt(10));
+            return dowloadImageManager.download(imageInfo.getUrl(), imageInfo.getFilename());
+        } catch (Exception e) {
+            return "Errore durante la ricerca " + Emoji.CRYING_CAT_FACE;
+        }
+    }
+
     private String getGame(Long chatId, String sceltaGiocatore) {
         List<String> sceltePossibili = Arrays.asList(SASSO, CARTA, FORBICE);
         String sceltaPc = sceltePossibili.get(new Random().nextInt(sceltePossibili.size()));
-        new MyBot().inviaMessaggio(chatId, messageManager.createSendMessage(sceltaPc));
+        new MyBot().inviaMessaggio(chatId, messageManager.getSendMessage(sceltaPc));
 
         if(sceltaGiocatore.equals(sceltaPc)){
             return "PAREGGIO" + Emoji.SMILING_FACE_WITH_OPEN_MOUTH_AND_SMILING_EYES;

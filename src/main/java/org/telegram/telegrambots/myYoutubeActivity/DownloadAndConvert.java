@@ -4,17 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static org.telegram.telegrambots.Constants.AUDIO_FOLDER;
 import static org.telegram.telegrambots.Constants.MESSAGE_AUDIO_FAILED;
 import static org.telegram.telegrambots.Constants.MESSAGE_VIDEO_FAILED;
 
 public class DownloadAndConvert {
 
-	private static String path = "D:\\Users\\arx50054\\Desktop\\prove\\";
-
 	public Object startAudio(String url){
 		try {
 			AppManagedDownload appManagedDownload = new AppManagedDownload();
-			List<File> videoTitles = appManagedDownload.download(url, path);
+			List<File> videoTitles = appManagedDownload.download(url, AUDIO_FOLDER);
 			AppManageMediaConverter appManageMediaConverter = new AppManageMediaConverter();
 			for (File file : videoTitles) {
 				System.out.println("Trying with " + file);
@@ -45,7 +44,7 @@ public class DownloadAndConvert {
 	public Object startVideo(String url){
 		try {
 			AppManagedDownload appManagedDownload = new AppManagedDownload();
-			List<File> videoTitles = appManagedDownload.download(url, path);
+			List<File> videoTitles = appManagedDownload.download(url, AUDIO_FOLDER);
 			for (File file : videoTitles) {
 				System.out.println("Trying with " + file.getName());
 				if (new File(file.getAbsolutePath()).canExecute() && file.length() < 40000000L) {

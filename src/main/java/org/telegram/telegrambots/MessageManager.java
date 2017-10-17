@@ -9,18 +9,14 @@ import java.io.File;
 import java.util.Random;
 
 class MessageManager {
-    SendMessage createSendMessage(String contenuto){
+    SendMessage getSendMessage(String contenuto){
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(contenuto);
         return sendMessage;
     }
 
     Object getSendPhoto(String folderPath) {
-        String photoPath = getRandomPhoto(folderPath);
-        if(photoPath != null){
-            return new SendPhoto().setNewPhoto(new File(photoPath));
-        }
-        return new SendMessage().setText("Nessuna foto disponibile ( " + folderPath + " )");
+        return new SendPhoto().setNewPhoto(new File(folderPath));
     }
 
     Object getSendAudio(File audio) {

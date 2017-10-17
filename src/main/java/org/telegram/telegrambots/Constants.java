@@ -9,12 +9,11 @@ import java.util.List;
 public class Constants {
     public static final int SOCKET_TIMEOUT = 75 * 1000;
 
-    static String RANDOM_PHOTOS_FOLDER = "/home/pi/bot-resources/random/";
-//    static String RANDOM_PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\Foto\\Random\\";
-    static String CAT_PHOTOS_FOLDER = "/home/pi/bot-resources/gatti/";
-//    static String CAT_PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\Foto\\Gatti\\";
-    static String MEME_PHOTOS_FOLDER = "/home/pi/bot-resources/meme/";
-//    static String MEME_PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\Foto\\Meme\\";
+//    static String PHOTOS_FOLDER = "/home/pi/bot-resources/foto/";
+    public static String PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\foto";
+
+//    static String AUDIO_FOLDER = "/home/pi/bot-resources/audio-video/";
+    public static String AUDIO_FOLDER = "D:\\Users\\arx50054\\Desktop\\audio-video";
 
     final static String SASSO = "Sasso\u270A";
     final static String CARTA = "Carta\u270B";
@@ -26,7 +25,7 @@ public class Constants {
 
     static List<String> INIT_COMMANDS = Arrays.asList("Audio/Video", "Foto", "Gioca", "Messaggiamo");
     static List<String> AUDIO_COMMANDS = Arrays.asList("Cerca su YouTube", "Indietro");
-    static List<String> PHOTO_COMMANDS = Arrays.asList("Meme", "Gatti", "Random", "Indietro");
+    static List<String> PHOTO_COMMANDS = Arrays.asList("Cerca su Google", "Indietro");
     static List<String> PLAY_COMMANDS = Arrays.asList(SASSO, CARTA, FORBICE, "Indietro");
     static List<String> TEXT_COMMANDS = Arrays.asList("Ciao", "Che ore sono?", "Che giorno è?", "Pajas", "Ti amo", "Indietro");
 
