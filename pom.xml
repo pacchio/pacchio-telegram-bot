@@ -120,6 +120,23 @@
             <version>1.16.16</version>
         </dependency>
 
+        <!--questo comando serve per installare un jar nel repository maven locale-->
+        <!--
+            mvn install:install-file
+            -Dfile=D:\Users\arx50054\Desktop\prove\libraries\jave-1.0.2\jave-1.0.2.jar
+            -DgroupId=com.jave.code
+            -DartifactId=jave
+            -Dversion=1.0.2
+            -Dpackaging=jar
+            -DlocalRepositoryPath=C:\Development\.m2\repository
+         -->
+
+        <dependency>
+            <groupId>com.jave.code</groupId>
+            <artifactId>jave</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>

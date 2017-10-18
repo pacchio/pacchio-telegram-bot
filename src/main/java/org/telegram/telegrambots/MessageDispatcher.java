@@ -15,9 +15,9 @@ import org.telegram.telegrambots.googleSearch.DowloadImageManager;
 import org.telegram.telegrambots.googleSearch.GResult;
 import org.telegram.telegrambots.googleSearch.GoogleSearchService;
 import org.telegram.telegrambots.googleSearch.ImageInfo;
-import org.telegram.telegrambots.myYoutubeActivity.DownloadAndConvert;
-import org.telegram.telegrambots.myYoutubeActivity.MySingletonMap;
-import org.telegram.telegrambots.myYoutubeActivity.YoutubeService;
+import org.telegram.telegrambots.youtubeSearch.DownloadAndConvert;
+import org.telegram.telegrambots.youtubeSearch.MySingletonMap;
+import org.telegram.telegrambots.youtubeSearch.YoutubeService;
 
 class MessageDispatcher {
 
@@ -40,7 +40,7 @@ class MessageDispatcher {
             case "Pajas":           return messageManager.getSendMessage(getRandomSentence(Constants.RISPOSTE_TRASH));
             case "Ti amo":          return messageManager.getSendMessage("Anche io" + Emoji.SMILING_FACE_WITH_HEART_SHAPED_EYES + Emoji.RED_HEARTH);
 
-            case "Cerca su Google": return messageManager.getSendMessage("Scrivi l'immagine da cercare preceduta da '?'");
+            case "Cerca su Google": return messageManager.getSendMessage("Scrivi l'immagine da cercare preceduta da '?'\nL'immagine inviata è casuale quindi se non sei soddisfatto ritenta la ricerca! " + Emoji.DIZZY_FACE);
 
             case SASSO:   return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), SASSO));
             case CARTA:   return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), CARTA));
@@ -56,9 +56,6 @@ class MessageDispatcher {
 
     private Object controllaDefault(Message message) {
         MyBot myBot = new MyBot();
-        if(message.getText().startsWith("?")){
-            return messageManager.getSendPhoto(creaResponseRicercaDaGoogle(sistemaStrinaRicercaGoogle(message)));
-        }
         if(message.getText().startsWith("#")){
             return messageManager.getSendMessage(creaResponseRicercaDaYoutube(message.getText().substring(1)));
         }
@@ -90,6 +87,15 @@ class MessageDispatcher {
                 return messageManager.getSendMessage((String) responseDownload);
             }
         }
+        else if(message.getText().startsWith("?")){
+            Object responseDownload = creaResponseRicercaDaGoogle(sistemaStrinaRicercaGoogle(message));
+            if(responseDownload instanceof File) {
+                return messageManager.getSendPhoto((File) responseDownload);
+            }
+            else{
+                return messageManager.getSendMessage((String) responseDownload);
+            }
+        }
         return messageManager.getSendMessage("Il messaggio '" + message.getText() + "' non corrisponde ad alcuna funzione");
     }
 
@@ -117,17 +123,16 @@ class MessageDispatcher {
         }
     }
 
-    private String creaResponseRicercaDaGoogle(String chiaveDiRicerca) {
+    private Object creaResponseRicercaDaGoogle(String chiaveDiRicerca) {
         GoogleSearchService googleSearchService = new GoogleSearchService();
         DowloadImageManager dowloadImageManager = new DowloadImageManager();
-
         try {
             List<GResult> results = googleSearchService.search(chiaveDiRicerca);
             Map<Integer, ImageInfo> resultsUrl = googleSearchService.creaListaRisultati(results);
             ImageInfo imageInfo = resultsUrl.get(new Random().nextInt(10));
             return dowloadImageManager.download(imageInfo.getUrl(), imageInfo.getFilename());
         } catch (Exception e) {
-            return "Errore durante la ricerca " + Emoji.CRYING_CAT_FACE;
+            return e.getMessage() + Emoji.CRYING_CAT_FACE;
         }
     }
 

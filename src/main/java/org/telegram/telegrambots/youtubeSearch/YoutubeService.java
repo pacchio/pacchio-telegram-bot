@@ -1,4 +1,4 @@
-package org.telegram.telegrambots.myYoutubeActivity;
+package org.telegram.telegrambots.youtubeSearch;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class YoutubeService {
 	/** Application name. */
@@ -66,7 +65,7 @@ public class YoutubeService {
 	 */
 	public static Credential authorize() throws IOException {
 		// Load client secrets.
-		InputStream in = ActivityRunner.class.getResourceAsStream("/client_secrets.json");
+		InputStream in = YoutubeService.class.getResourceAsStream("/client_secrets.json");
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader( in ));
 
 		// Build flow and trigger user authorization request.

@@ -86,7 +86,11 @@ public class GoogleSearchService {
 			String jsonText = readAll(br);
 			JSONObject json = new JSONObject(jsonText);
 			return json;
-		} finally {
+		}
+		catch (Exception e){
+			throw new RuntimeException("Errore durante il download!");
+		}
+		finally{
 			conn.disconnect();
 		}
 	}

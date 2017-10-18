@@ -9,11 +9,11 @@ import java.util.List;
 public class Constants {
     public static final int SOCKET_TIMEOUT = 75 * 1000;
 
-//    static String PHOTOS_FOLDER = "/home/pi/bot-resources/foto/";
-    public static String PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\foto";
+    public static String PHOTOS_FOLDER = "/home/pi/bot-resources/foto/";
+//    public static String PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\foto";
 
-//    static String AUDIO_FOLDER = "/home/pi/bot-resources/audio-video/";
-    public static String AUDIO_FOLDER = "D:\\Users\\arx50054\\Desktop\\audio-video";
+    public static String AUDIO_FOLDER = "/home/pi/bot-resources/audio-video/";
+//    public static String AUDIO_FOLDER = "D:\\Users\\arx50054\\Desktop\\audio-video";
 
     final static String SASSO = "Sasso\u270A";
     final static String CARTA = "Carta\u270B";

@@ -51,7 +51,7 @@ public class MyBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
             try {
-                sendMessage(new SendMessage().setChatId(chatId).setText("Errore durante l'invio del messaggio, video troppo pesante! " + Emoji.ANGRY_FACE));
+                sendMessage(new SendMessage().setChatId(chatId).setText("Errore durante l'invio del contenuto " + Emoji.ANGRY_FACE));
                 System.out.println("Message sent: ERROR");
             } catch (TelegramApiException e1) {
                 e1.printStackTrace();

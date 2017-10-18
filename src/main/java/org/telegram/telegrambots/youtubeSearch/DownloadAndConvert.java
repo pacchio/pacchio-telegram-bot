@@ -1,4 +1,4 @@
-package org.telegram.telegrambots.myYoutubeActivity;
+package org.telegram.telegrambots.youtubeSearch;
 
 import java.io.File;
 import java.io.IOException;

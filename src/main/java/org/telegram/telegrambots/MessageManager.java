@@ -15,8 +15,8 @@ class MessageManager {
         return sendMessage;
     }
 
-    Object getSendPhoto(String folderPath) {
-        return new SendPhoto().setNewPhoto(new File(folderPath));
+    Object getSendPhoto(File photo) {
+        return new SendPhoto().setNewPhoto(photo);
     }
 
     Object getSendAudio(File audio) {

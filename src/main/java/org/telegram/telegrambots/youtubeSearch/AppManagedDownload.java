@@ -1,4 +1,4 @@
-package org.telegram.telegrambots.myYoutubeActivity;
+package org.telegram.telegrambots.youtubeSearch;
 
 import com.github.axet.vget.VGet;
 import com.github.axet.vget.info.VGetParser;
@@ -6,7 +6,6 @@ import com.github.axet.vget.info.VideoFileInfo;
 import com.github.axet.vget.info.VideoInfo;
 import com.github.axet.vget.vhs.VimeoInfo;
 import com.github.axet.vget.vhs.YouTubeInfo;
-import com.github.axet.vget.vhs.YouTubeMPGParser;
 import com.github.axet.wget.SpeedInfo;
 import com.github.axet.wget.info.DownloadInfo;
 import com.github.axet.wget.info.ex.DownloadInterruptedError;
@@ -14,7 +13,6 @@ import com.github.axet.wget.info.ex.DownloadInterruptedError;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

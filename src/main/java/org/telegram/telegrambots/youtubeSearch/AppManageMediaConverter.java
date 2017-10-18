@@ -1,4 +1,4 @@
-package org.telegram.telegrambots.myYoutubeActivity;
+package org.telegram.telegrambots.youtubeSearch;
 
 import it.sauronsoftware.jave.AudioAttributes;
 import it.sauronsoftware.jave.Encoder;

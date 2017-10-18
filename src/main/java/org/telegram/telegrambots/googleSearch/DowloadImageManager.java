@@ -12,7 +12,7 @@ import static org.telegram.telegrambots.Constants.PHOTOS_FOLDER;
 
 public class DowloadImageManager {
 
-	public String download(String link, String filename) throws MalformedURLException {
+	public File download(String link, String filename) throws MalformedURLException {
 		URL url = new URL(link);
 		try {
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -32,11 +32,11 @@ public class DowloadImageManager {
 
 			System.out.println("Download completed !");
 
-			return PHOTOS_FOLDER + File.separator + filename;
+			return new File(PHOTOS_FOLDER + File.separator + filename);
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			return "Errore durante il download";
+			throw new RuntimeException("Errore durante il download!");
 		}
 	}
 
