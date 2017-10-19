@@ -2,6 +2,7 @@ package org.telegram.telegrambots.googleSearch;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,6 +22,8 @@ import java.util.Map;
 import java.util.Properties;
 
 public class GoogleSearchService {
+
+	final Logger logger = Logger.getLogger(GoogleSearchService.class);
 
 	private static final String PROPERTIES_FILENAME = "google-api.properties";
 
@@ -48,7 +51,7 @@ public class GoogleSearchService {
 		String fileType = "png,jpg,jpeg";
 		String searchType = "image";
 		URL url = new URL ("https://www.googleapis.com/customsearch/v1?key=" +key+ "&cx=" +cx+ "&q=" +qry+"&fileType="+fileType+"&searchType="+searchType+"&alt=json");
-		System.out.println("Chiamata effettuata all'url: " + url.toString());
+		logger.info("Chiamata effettuata all'url: " + url.toString());
 		JSONObject jsonResponse = readJsonFromUrl(url);
 		List<GResult> results = new Gson().fromJson(jsonResponse.getJSONArray("items").toString(),new TypeToken<List<GResult>>() {}.getType());
 		return results;
@@ -56,14 +59,14 @@ public class GoogleSearchService {
 
 	public Map<Integer, ImageInfo> creaListaRisultati (List<GResult> results){
 	 	Map<Integer, ImageInfo> mappaRisultati = new HashMap<>();
-		System.out.println("Risultati:");
+		logger.info("Risultati:");
 		for(int i = 0 ; i < results.size() ; i++){
 			ImageInfo imageInfo = new ImageInfo();
 			String filename = results.get(i).getLink();
 			imageInfo.setFilename(controlFilenameQuality(filename));
 			imageInfo.setUrl(results.get(i).getImage().getThumbnailLink());
 			mappaRisultati.put(i, imageInfo);
-			System.out.println("\t" + i + " - " + imageInfo.getFilename());
+			logger.info("\t" + i + " - " + imageInfo.getFilename());
 		}
 		return mappaRisultati;
 	}

@@ -1,15 +1,18 @@
 package org.telegram.telegrambots;
 
-import javafx.scene.image.Image;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
-import org.glassfish.grizzly.streams.StreamReader;
+import org.apache.log4j.Logger;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public class SaveImage {
+
+    final static Logger logger = Logger.getLogger(SaveImage.class);
 
     public static void main(String[] args) throws MalformedURLException {
         download();
@@ -31,13 +34,13 @@ public class SaveImage {
 
             while ((read = inputStream.read(buffer)) != -1){
                 outputStream.write(buffer, 0, read);
-                System.out.println("File is downloading...");
+                logger.info("File is downloading...");
             }
 
             inputStream.close();
             outputStream.close();
 
-            System.out.println("Download completed !");
+            logger.info("Download completed !");
 
         } catch (IOException e) {
             e.printStackTrace();

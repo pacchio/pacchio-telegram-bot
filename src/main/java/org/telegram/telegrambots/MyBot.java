@@ -1,5 +1,6 @@
 package org.telegram.telegrambots;
 
+import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendAudio;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendPhoto;
@@ -10,10 +11,12 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 public class MyBot extends TelegramLongPollingBot {
 
+    final Logger logger = Logger.getLogger(MyBot.class);
+
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            System.out.println(getReceivedMessage(update));
+            logger.info(getReceivedMessage(update));
             Object message = new MessageDispatcher().createResponse(update);
             inviaMessaggio(update.getMessage().getChatId(), message);
         }
@@ -31,28 +34,28 @@ public class MyBot extends TelegramLongPollingBot {
             if(message instanceof SendMessage) {
                 ((SendMessage) message).setChatId(chatId);
                 sendMessage((SendMessage) message);
-                System.out.println("Message sent: "+((SendMessage)message).getText());
+                logger.info("Message sent: "+((SendMessage)message).getText());
             }
             else if(message instanceof SendPhoto){
                 ((SendPhoto) message).setChatId(chatId);
                 sendPhoto((SendPhoto) message);
-                System.out.println("Message sent: "+((SendPhoto)message).getPhotoName());
+                logger.info("Message sent: "+((SendPhoto)message).getPhotoName());
             }
             else if(message instanceof SendAudio){
                 ((SendAudio) message).setChatId(chatId);
                 sendAudio((SendAudio) message);
-                System.out.println("Message sent: "+((SendAudio)message).getAudioName());
+                logger.info("Message sent: "+((SendAudio)message).getAudioName());
             }
             else if(message instanceof SendVideo){
                 ((SendVideo) message).setChatId(chatId);
                 sendVideo((SendVideo) message);
-                System.out.println("Message sent: "+((SendVideo)message).getVideoName());
+                logger.info("Message sent: "+((SendVideo)message).getVideoName());
             }
         } catch (TelegramApiException e) {
             e.printStackTrace();
             try {
                 sendMessage(new SendMessage().setChatId(chatId).setText("Errore durante l'invio del contenuto " + Emoji.ANGRY_FACE));
-                System.out.println("Message sent: ERROR");
+                logger.error("Message sent: ERROR");
             } catch (TelegramApiException e1) {
                 e1.printStackTrace();
             }
