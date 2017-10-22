@@ -2,6 +2,8 @@ package org.telegram.telegrambots.googleSearch;
 
 import org.apache.log4j.Logger;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,6 +11,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.telegram.telegrambots.Constants.PHOTOS_FOLDER;
 
@@ -17,31 +21,40 @@ public class DowloadImageManager {
 	final Logger logger = Logger.getLogger(DowloadImageManager.class);
 
 	public File download(String link, String filename) throws MalformedURLException {
-		URL url = new URL(link);
-		try {
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			FileOutputStream outputStream = new FileOutputStream(PHOTOS_FOLDER + File.separator + filename);
-			InputStream inputStream = connection.getInputStream();
-
-			int read = -1;
-			byte[] buffer = new byte[4096];
-
-			while ((read = inputStream.read(buffer)) != -1){
-				outputStream.write(buffer, 0, read);
-				logger.info("File is downloading...");
+		if(getPhotoWithSameTitle(PHOTOS_FOLDER, filename).size() == 0) {
+			URL url = new URL(link);
+			try {
+				logger.info("Download started !");
+				BufferedImage img = ImageIO.read(url);
+				File file = new File(PHOTOS_FOLDER + File.separator + filename);
+				ImageIO.write(img, "jpg", file);
+				logger.info("Download completed !");
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Errore durante il download!");
 			}
-
-			inputStream.close();
-			outputStream.close();
-
-			logger.info("Download completed !");
-
-			return new File(PHOTOS_FOLDER + File.separator + filename);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Errore durante il download!");
 		}
+		else{
+			logger.info("Foto già esistente in archivio");
+		}
+		return new File(PHOTOS_FOLDER + File.separator + filename);
+	}
+
+	private List<File> getPhotoWithSameTitle(String path, String title) {
+		File folder = new File(path);
+		List<File> files = new ArrayList<>();
+		if (folder.isDirectory()) {
+			File[] listOfFiles = folder.listFiles();
+			if(listOfFiles == null){
+				return files;
+			}
+			for(File file : listOfFiles){
+				if(file.getName().contains(title)){
+					files.add(file);
+				}
+			}
+		}
+		return files;
 	}
 
 }

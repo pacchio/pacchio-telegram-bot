@@ -16,10 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class GoogleSearchService {
 
@@ -45,16 +42,21 @@ public class GoogleSearchService {
 	}
 
 	 public List<GResult> search(String chiaveDiRicerca)  throws MalformedURLException, URISyntaxException, IOException {
-		String key = properties.getProperty("google.apikey");
-		String cx  = properties.getProperty("google.custom-search-engine-id");
-		String qry = chiaveDiRicerca;
-		String fileType = "png,jpg,jpeg";
-		String searchType = "image";
-		URL url = new URL ("https://www.googleapis.com/customsearch/v1?key=" +key+ "&cx=" +cx+ "&q=" +qry+"&fileType="+fileType+"&searchType="+searchType+"&alt=json");
-		logger.info("Chiamata effettuata all'url: " + url.toString());
-		JSONObject jsonResponse = readJsonFromUrl(url);
-		List<GResult> results = new Gson().fromJson(jsonResponse.getJSONArray("items").toString(),new TypeToken<List<GResult>>() {}.getType());
-		return results;
+		 String key = properties.getProperty("google.apikey");
+		 String cx  = properties.getProperty("google.custom-search-engine-id");
+		 String fileType = properties.getProperty("google.search.fileType");
+		 String searchType = properties.getProperty("google.search.searchType");
+		 Integer numItems = Integer.parseInt(properties.getProperty("google.search.numItems"));
+		 List<GResult> results = new ArrayList<>();
+		 for(int start=1;start<numItems;start+=10){
+			 URL url = new URL ("https://www.googleapis.com/customsearch/v1?key=" +key+ "&cx=" +cx+ "&q=" +chiaveDiRicerca+"&fileType="+fileType+"&searchType="+searchType+"&start="+start+"&alt=json");
+			 logger.info("Chiamata numero " + (start + 10 - 1) / 10 + " effettuata all'url: " + url.toString());
+			 JSONObject jsonResponse = readJsonFromUrl(url);
+			 List<GResult> tempResults = new Gson().fromJson(jsonResponse.getJSONArray("items").toString(),new TypeToken<List<GResult>>() {}.getType());
+			 results.addAll(tempResults);
+		 }
+
+		 return results;
 	}
 
 	public Map<Integer, ImageInfo> creaListaRisultati (List<GResult> results){
@@ -64,7 +66,7 @@ public class GoogleSearchService {
 			ImageInfo imageInfo = new ImageInfo();
 			String filename = results.get(i).getLink();
 			imageInfo.setFilename(controlFilenameQuality(filename));
-			imageInfo.setUrl(results.get(i).getImage().getThumbnailLink());
+			imageInfo.setUrl(results.get(i).getLink());
 			mappaRisultati.put(i, imageInfo);
 			logger.info("\t" + i + " - " + imageInfo.getFilename());
 		}

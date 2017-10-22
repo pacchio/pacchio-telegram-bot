@@ -22,7 +22,7 @@ import org.telegram.telegrambots.youtubeSearch.YoutubeService;
 class MessageDispatcher {
 
     private KeyboardManager keyboardManager = new KeyboardManager();
-     private MessageManager messageManager = new MessageManager();
+    private MessageManager messageManager = new MessageManager();
 
      Object createResponse(Update update) {
 
@@ -129,7 +129,7 @@ class MessageDispatcher {
         try {
             List<GResult> results = googleSearchService.search(chiaveDiRicerca);
             Map<Integer, ImageInfo> resultsUrl = googleSearchService.creaListaRisultati(results);
-            ImageInfo imageInfo = resultsUrl.get(new Random().nextInt(10));
+            ImageInfo imageInfo = resultsUrl.get(new Random().nextInt(20));
             return dowloadImageManager.download(imageInfo.getUrl(), imageInfo.getFilename());
         } catch (Exception e) {
             return e.getMessage() + Emoji.CRYING_CAT_FACE;

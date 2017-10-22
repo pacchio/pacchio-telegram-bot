@@ -15,27 +15,18 @@ class MessageManager {
         return sendMessage;
     }
 
-    Object getSendPhoto(File photo) {
-        return new SendPhoto().setNewPhoto(photo);
+    SendPhoto getSendPhoto(File photo) {
+        SendPhoto sendPhoto = new SendPhoto();
+        sendPhoto.setNewPhoto(photo);
+        return sendPhoto;
     }
 
-    Object getSendAudio(File audio) {
+    SendAudio getSendAudio(File audio) {
         return new SendAudio().setNewAudio(audio);
     }
 
-    Object getSendVideo(File video) {
+    SendVideo getSendVideo(File video) {
         return new SendVideo().setNewVideo(video);
-    }
-
-    private String getRandomPhoto(String folderPath) {
-        File folder = new File(folderPath);
-        File[] listOfFiles = folder.listFiles();
-
-        if (listOfFiles != null && listOfFiles.length > 0) {
-            int random = new Random().nextInt(listOfFiles.length);
-            return listOfFiles[random].getAbsolutePath();
-        }
-        return null;
     }
 
 }

@@ -10,9 +10,11 @@ public class Constants {
     public static final int SOCKET_TIMEOUT = 75 * 1000;
 
     public static String PHOTOS_FOLDER = "/home/pi/bot-resources/foto/";
+//    public static String PHOTOS_FOLDER = "C:\\Development\\workspace\\java-project\\my-telegram-bot\\bot-resources\\foto";
 //    public static String PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\foto";
 
     public static String AUDIO_FOLDER = "/home/pi/bot-resources/audio-video/";
+//    public static String AUDIO_FOLDER = "C:\\Development\\workspace\\java-project\\my-telegram-bot\\bot-resources\\audio-video";
 //    public static String AUDIO_FOLDER = "D:\\Users\\arx50054\\Desktop\\audio-video";
 
     final static String SASSO = "Sasso\u270A";
