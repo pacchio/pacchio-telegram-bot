@@ -11,6 +11,7 @@ import java.util.*;
 import com.google.api.services.youtube.model.SearchListResponse;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.coinmarketcap.CoinMarketCap;
 import org.telegram.telegrambots.googleSearch.DowloadImageManager;
 import org.telegram.telegrambots.googleSearch.GResult;
 import org.telegram.telegrambots.googleSearch.GoogleSearchService;
@@ -33,6 +34,7 @@ class MessageDispatcher {
             case "Foto":    return keyboardManager.createKeyboardMessage(Constants.PHOTO_COMMANDS);
             case "Gioca":   return keyboardManager.createKeyboardMessage(Constants.PLAY_COMMANDS);
             case "Messaggiamo":   return keyboardManager.createKeyboardMessage(Constants.TEXT_COMMANDS);
+            case "Coin Market Cap":   return keyboardManager.createKeyboardMessage(Constants.COINMARKETCAP_COMMANDS);
 
             case "Ciao":            return messageManager.getSendMessage("Ciao Bambolina" + Emoji.FACE_THROWING_A_KISS);
             case "Che ore sono?":   return messageManager.getSendMessage(getTime());
@@ -45,6 +47,9 @@ class MessageDispatcher {
             case SASSO:   return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), SASSO));
             case CARTA:   return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), CARTA));
             case FORBICE: return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), FORBICE));
+
+            case "Quote": return messageManager.getSendMessage("Funzione non ancora disponibile");
+            case "Disallineamenti": return messageManager.getSendMessage(new CoinMarketCap().disallinamenti());
 
             case "Cerca su YouTube": return messageManager.getSendMessage("Scrivi il video da cercare preceduto da '#'");
 

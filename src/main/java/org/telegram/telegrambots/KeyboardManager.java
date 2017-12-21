@@ -21,11 +21,13 @@ class KeyboardManager {
 
     private ReplyKeyboardMarkup getKeyboard(List<String> commands) {
         List<List<String>> keyboardCommands = new ArrayList<>();
-
-        for(int i=0, j=0; i<commands.size()/2; i++){
+        int j=0;
+        for(int i=0; i<commands.size()/2; i++){
             keyboardCommands.add(getCommandRow(commands.get(j), commands.get(j+1)));
             j+=2;
         }
+
+        if(commands.size() % 2 == 1) keyboardCommands.add(getCommandRow(commands.get(j), ""));
 
         ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
         replyKeyboard.setKeyboard(getKeyboardRows(keyboardCommands));
