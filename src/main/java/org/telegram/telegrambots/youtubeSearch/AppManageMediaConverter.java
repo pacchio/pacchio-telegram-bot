@@ -6,10 +6,13 @@ import it.sauronsoftware.jave.EncoderException;
 import it.sauronsoftware.jave.EncodingAttributes;
 import it.sauronsoftware.jave.InputFormatException;
 import it.sauronsoftware.jave.VideoAttributes;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 
 public class AppManageMediaConverter {
+
+	final Logger logger = Logger.getLogger(AppManageMediaConverter.class);
 
 	public Boolean convertToMp3(File source, File target) {
 
@@ -17,9 +20,9 @@ public class AppManageMediaConverter {
 
 		Encoder encoder = new Encoder();
 		try {
-			System.out.println("Start conversion in mp3 format...");
+			logger.info("Start conversion in mp3 format...");
 			encoder.encode(source, target, attrs);
-			System.out.println("File converted");
+			logger.info("File converted");
 			return true;
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("Error in file conversion", e);
@@ -36,9 +39,9 @@ public class AppManageMediaConverter {
 
 		Encoder encoder = new Encoder();
 		try {
-			System.out.println("Start conversion in mp4 format...");
+			logger.info("Start conversion in mp4 format...");
 			encoder.encode(source, target, attrs);
-			System.out.println("File converted!");
+			logger.info("File converted!");
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("Error in file conversion", e);
 		} catch (InputFormatException e) {

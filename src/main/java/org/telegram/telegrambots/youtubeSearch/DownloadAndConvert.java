@@ -1,14 +1,16 @@
 package org.telegram.telegrambots.youtubeSearch;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.telegram.telegrambots.Constants.AUDIO_FOLDER;
-import static org.telegram.telegrambots.Constants.MESSAGE_AUDIO_FAILED;
-import static org.telegram.telegrambots.Constants.MESSAGE_VIDEO_FAILED;
+import static org.telegram.telegrambots.Constants.*;
 
 public class DownloadAndConvert {
+
+	final Logger logger = Logger.getLogger(DownloadAndConvert.class);
 
 	public Object startAudio(String url){
 		try {
@@ -16,7 +18,7 @@ public class DownloadAndConvert {
 			List<File> videoTitles = appManagedDownload.download(url, AUDIO_FOLDER);
 			AppManageMediaConverter appManageMediaConverter = new AppManageMediaConverter();
 			for (File file : videoTitles) {
-				System.out.println("Trying with " + file);
+				logger.info("Trying with " + file);
 				File source = new File(file.getAbsolutePath());
 				File target = builtTargetForMp3(file.getAbsolutePath());
 				if(target != null) {
@@ -27,7 +29,7 @@ public class DownloadAndConvert {
 							return target;
 						}
 					} catch (Exception e) {
-						System.out.println(e.getMessage());
+						logger.error(e.getMessage());
 					}
 				}
 				else {
@@ -46,7 +48,7 @@ public class DownloadAndConvert {
 			AppManagedDownload appManagedDownload = new AppManagedDownload();
 			List<File> videoTitles = appManagedDownload.download(url, AUDIO_FOLDER);
 			for (File file : videoTitles) {
-				System.out.println("Trying with " + file.getName());
+				logger.info("Trying with " + file.getName());
 				if (new File(file.getAbsolutePath()).canExecute() && file.length() < 40000000L) {
 					return new File(file.getAbsolutePath());
 				}
@@ -73,14 +75,14 @@ public class DownloadAndConvert {
 		try {
 			Boolean deleted = file.delete();
 			if(deleted){
-				System.out.println("Video deleted.");
+				logger.info("Video deleted.");
 			}
 			else{
-				System.out.println("Video not deleted.");
+				logger.info("Video not deleted.");
 			}
 		}
 		catch (Exception e){
-			System.out.println("Error deleting video");
+			logger.error("Error deleting video");
 		}
 	}
 }

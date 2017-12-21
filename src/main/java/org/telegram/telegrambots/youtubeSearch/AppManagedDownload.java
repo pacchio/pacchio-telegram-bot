@@ -9,6 +9,7 @@ import com.github.axet.vget.vhs.YouTubeInfo;
 import com.github.axet.wget.SpeedInfo;
 import com.github.axet.wget.info.DownloadInfo;
 import com.github.axet.wget.info.ex.DownloadInterruptedError;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.net.URL;
@@ -19,6 +20,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AppManagedDownload {
+
+	final static Logger logger = Logger.getLogger(AppManagedDownload.class);
 
 	static class VGetStatus implements Runnable {
 		VideoInfo videoinfo;
@@ -52,42 +55,42 @@ public class AppManagedDownload {
 				case DONE:
 					if (videoinfo instanceof YouTubeInfo) {
 						YouTubeInfo i = (YouTubeInfo) videoinfo;
-						System.out.println(videoinfo.getState() + " " + i.getVideoQuality());
+						logger.info(videoinfo.getState() + " " + i.getVideoQuality());
 					} else if (videoinfo instanceof VimeoInfo) {
 						VimeoInfo i = (VimeoInfo) videoinfo;
-						System.out.println(videoinfo.getState() + " " + i.getVideoQuality());
+						logger.info(videoinfo.getState() + " " + i.getVideoQuality());
 					} else {
-						System.out.println("downloading unknown quality");
+						logger.info("downloading unknown quality");
 					}
 					for (VideoFileInfo d : videoinfo.getInfo()) {
 						SpeedInfo speedInfo = getSpeedInfo(d);
 						speedInfo.end(d.getCount());
 						if(d.targetFile != null) {
-							System.out.println(String.format("file:%d - %s (%s)", dinfoList.indexOf(d), d.targetFile.getName(),
+							logger.info(String.format("file:%d - %s (%s)", dinfoList.indexOf(d), d.targetFile.getName(),
 									formatSpeed(speedInfo.getAverageSpeed())));
 						}
 						else{
-							System.out.println(String.format("file:%d - %s (%s)", dinfoList.indexOf(d), d.targetFile,
+							logger.info(String.format("file:%d - %s (%s)", dinfoList.indexOf(d), d.targetFile,
 									formatSpeed(speedInfo.getAverageSpeed())));
 						}
 					}
 					break;
 				case ERROR:
-						System.out.println(videoinfo.getState() + " " + videoinfo.getDelay());
+						logger.info(videoinfo.getState() + " " + videoinfo.getDelay());
 
 						if (dinfoList != null) {
 							for (DownloadInfo dinfo : dinfoList) {
-								System.out.println("file:" + dinfoList.indexOf(dinfo) + " - " + dinfo.getException() + " delay:"
+								logger.info("file:" + dinfoList.indexOf(dinfo) + " - " + dinfo.getException() + " delay:"
 										+ dinfo.getDelay());
 							}
 						}
 						break;
 				case RETRYING:
-					System.out.println(videoinfo.getState() + " " + videoinfo.getDelay());
+					logger.info(videoinfo.getState() + " " + videoinfo.getDelay());
 
 					if (dinfoList != null) {
 						for (DownloadInfo dinfo : dinfoList) {
-							System.out.println("file:" + dinfoList.indexOf(dinfo) + " - " + dinfo.getState() + " "
+							logger.info("file:" + dinfoList.indexOf(dinfo) + " - " + dinfo.getState() + " "
 									+ dinfo.getException() + " delay:" + dinfo.getDelay());
 						}
 					}
@@ -104,7 +107,7 @@ public class AppManagedDownload {
 							SpeedInfo speedInfo = getSpeedInfo(dinfo);
 							speedInfo.step(dinfo.getCount());
 
-							System.out.println(String.format("file:%d - %s %.0f%% (%s)", dinfoList.indexOf(dinfo),
+							logger.info(String.format("file:%d - %s %.0f%% (%s)", dinfoList.indexOf(dinfo),
 									videoinfo.getState(), (dinfo.getCount() / (float) dinfo.getLength())*100,
 									formatSpeed(speedInfo.getCurrentSpeed())));
 						}
@@ -164,7 +167,7 @@ public class AppManagedDownload {
 			// or download url link before startAudio download. or just skip it.
 			v.extract(user, stop, notify);
 
-			System.out.println("Title: " + videoinfo.getTitle());
+			logger.info("Title: " + videoinfo.getTitle());
 
 			List<File> videos = getVideosWithSameTitle(path, videoinfo.getTitle());
 			if(videos.size() > 0){
@@ -179,7 +182,7 @@ public class AppManagedDownload {
 					// v.targetFile(dinfo, ext, conflict) to set name dynamically or
 					// d.targetFile = new File("/Downloads/CustomName.mp3");
 					// to set destinationTarget name manually.
-					System.out.println("Download URL: " + d.getSource());
+					logger.info("Download URL: " + d.getSource());
 				}
 			}
 
