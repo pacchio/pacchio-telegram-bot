@@ -1,6 +1,7 @@
 package org.telegram.telegrambots.coinmarketcap;
 
 import javafx.util.converter.BigDecimalStringConverter;
+import org.apache.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -17,6 +18,9 @@ import java.util.List;
 import static org.telegram.telegrambots.Constants.MESSAGE_COINMARKETCAP_FAILED;
 
 public class CoinMarketCap {
+
+	public static final String ONE_DOLLAR_IN_EURO = "0.842452886";
+	final Logger logger = Logger.getLogger(CoinMarketCap.class);
 
 	public String disallinamenti(){
 		List<Coin> coins = new ArrayList<Coin>();
@@ -36,6 +40,7 @@ public class CoinMarketCap {
 			}
 			return results;
 		} catch (Exception e){
+			logger.error(e);
 			return MESSAGE_COINMARKETCAP_FAILED;
 		}
 	}
@@ -69,6 +74,28 @@ public class CoinMarketCap {
 		}
 
 		return coins;
+	}
+
+	public String info(){
+		List<Coin> coins = new ArrayList<Coin>();
+		try {
+			coins.addAll(getCoints(1));
+
+			String results = "";
+			String format = "%1$-20s%2$-10s\n";
+
+			for (Coin c : coins) {
+				results += String.format(format, c.getSymbol(), getValueInEuro(c) + " €");
+			}
+			return results;
+		} catch (Exception e){
+			logger.error(e);
+			return MESSAGE_COINMARKETCAP_FAILED;
+		}
+	}
+
+	private BigDecimal getValueInEuro(Coin c) {
+		return c.getPrice().multiply(new BigDecimal(ONE_DOLLAR_IN_EURO)).setScale(2, RoundingMode.CEILING);
 	}
 
 	private static BigDecimal parseDecimal(String text) {

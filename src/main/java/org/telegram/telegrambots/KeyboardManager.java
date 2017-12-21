@@ -27,7 +27,7 @@ class KeyboardManager {
             j+=2;
         }
 
-        if(commands.size() % 2 == 1) keyboardCommands.add(getCommandRow(commands.get(j), ""));
+        if(commands.size() % 2 == 1) keyboardCommands.add(getCommandRow(commands.get(j), null));
 
         ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
         replyKeyboard.setKeyboard(getKeyboardRows(keyboardCommands));
@@ -51,7 +51,9 @@ class KeyboardManager {
     private List<String> getCommandRow(String command1, String command2) {
         List<String> commandsRow = new ArrayList<>();
         commandsRow.add(command1);
-        commandsRow.add(command2);
+        if(command2 != null) {
+            commandsRow.add(command2);
+        }
         return commandsRow;
     }
 

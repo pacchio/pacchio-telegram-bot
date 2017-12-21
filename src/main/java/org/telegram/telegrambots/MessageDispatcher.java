@@ -48,7 +48,7 @@ class MessageDispatcher {
             case CARTA:   return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), CARTA));
             case FORBICE: return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), FORBICE));
 
-            case "Quote": return messageManager.getSendMessage("Funzione non ancora disponibile");
+            case "Quote": return messageManager.getSendMessage(new CoinMarketCap().info());
             case "Disallineamenti": return messageManager.getSendMessage(new CoinMarketCap().disallinamenti());
 
             case "Cerca su YouTube": return messageManager.getSendMessage("Scrivi il video da cercare preceduto da '#'");
