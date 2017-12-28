@@ -4,6 +4,7 @@ import javafx.util.converter.BigDecimalStringConverter;
 import org.apache.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -19,7 +20,7 @@ import static org.telegram.telegrambots.Constants.MESSAGE_COINMARKETCAP_FAILED;
 
 public class CoinMarketCap {
 
-	public static final String ONE_DOLLAR_IN_EURO = "0.842452886";
+	public static String ONE_DOLLAR_IN_EURO = "0.842452886";
 	final Logger logger = Logger.getLogger(CoinMarketCap.class);
 
 	public String disallinamenti(){
@@ -79,6 +80,7 @@ public class CoinMarketCap {
 	public String info(){
 		List<Coin> coins = new ArrayList<Coin>();
 		try {
+		    ONE_DOLLAR_IN_EURO = oneDollarValueInEuro();
 			coins.addAll(getCoints(1));
 
 			String results = "";
@@ -95,10 +97,22 @@ public class CoinMarketCap {
 	}
 
 	private BigDecimal getValueInEuro(Coin c) {
-		return c.getPrice().multiply(new BigDecimal(ONE_DOLLAR_IN_EURO)).setScale(2, RoundingMode.CEILING);
+        return c.getPrice().multiply(new BigDecimal(ONE_DOLLAR_IN_EURO)).setScale(4, RoundingMode.CEILING);
 	}
 
-	private static BigDecimal parseDecimal(String text) {
+    private String oneDollarValueInEuro() {
+        try {
+            Connection.Response rs = Jsoup.connect("http://www.x-rates.com/calculator/").execute();
+            Document doc = rs.parse();
+            Element els = doc.getElementsByClass("ccOutputRslt").first();
+            return els.text().replace("EUR", "").trim();
+        } catch (IOException e) {
+            logger.error(e);
+            return MESSAGE_COINMARKETCAP_FAILED;
+        }
+	}
+
+    private static BigDecimal parseDecimal(String text) {
 		return new BigDecimalStringConverter()
 				.fromString(onlyNumbers(text));
 	}
