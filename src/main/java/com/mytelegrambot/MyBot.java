@@ -3,6 +3,7 @@ package com.mytelegrambot;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.methods.send.SendAudio;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -26,9 +27,15 @@ public class MyBot extends TelegramLongPollingBot {
 
     @Autowired
     private MessageDispatcher messageDispatcher;
+    @Autowired
+    private TaskExecutor taskExecutor;
 
     @Override
     public void onUpdateReceived(Update update) {
+        taskExecutor.execute(() -> elabora(update));
+    }
+
+    private void elabora(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             log.info(getReceivedMessage(update));
             Object message = messageDispatcher.createResponse(update);
