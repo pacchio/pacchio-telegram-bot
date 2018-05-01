@@ -11,7 +11,9 @@ import com.mytelegrambot.youtubeSearch.MySingletonMap;
 import com.mytelegrambot.youtubeSearch.YoutubeService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 
@@ -28,17 +30,33 @@ import static com.mytelegrambot.ExceptionHelper.getExceptionStacktrace;
 @Component
 class MessageDispatcher {
 
+    @Value("${url}")
+    String apiUrl;
+
     @Autowired
     private KeyboardManager keyboardManager;
     @Autowired
     private MessageManager messageManager;
     @Autowired
     private MyBot myBot;
+    @Autowired
+    private RestTemplate restTemplate;
 
      Object createResponse(Update update) {
 
+        if(update.getMessage().getContact() != null){
+            TelegramUserData request = createRequest(update.getMessage());
+            TelegramUserData telegramUserData = restTemplate.postForObject(apiUrl, request, TelegramUserData.class);
+            if(telegramUserData != null) {
+                log.info("Insert new user: " + telegramUserData.chatID);
+            } else {
+                log.info("User already exist");
+            }
+            return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
+        }
+
         switch (update.getMessage().getText()){
-            case "/start": return keyboardManager.createKeyboardMessage(Constants.INIT_COMMANDS);
+            case "/start": return keyboardManager.createKeyboardContact(Constants.CONTACT_COMMAND);
 
             case "Audio/Video":   return keyboardManager.createKeyboardMessage(Constants.AUDIO_COMMANDS);
             case "Foto":    return keyboardManager.createKeyboardMessage(Constants.PHOTO_COMMANDS);
@@ -67,6 +85,16 @@ class MessageDispatcher {
 
             default: return controllaDefault(update.getMessage());
         }
+    }
+
+    private TelegramUserData createRequest(Message message) {
+        TelegramUserData telegramUserData = new TelegramUserData();
+        telegramUserData.setChatID(message.getChatId());
+        telegramUserData.setFirstname(message.getChat().getFirstName());
+        telegramUserData.setLastname(message.getChat().getLastName());
+        telegramUserData.setUsername(message.getChat().getUserName());
+        telegramUserData.setTelephoneNumber(message.getContact().getPhoneNumber());
+        return telegramUserData;
     }
 
     private Object controllaDefault(Message message) {

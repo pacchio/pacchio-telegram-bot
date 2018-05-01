@@ -12,16 +12,25 @@ import java.util.List;
 @Component
 class KeyboardManager {
 
+    SendMessage createKeyboardContact(List<String> commands){
+        SendMessage sendMessage = new SendMessage();
+
+        sendMessage.setReplyMarkup(getKeyboard(commands, true));
+        sendMessage.setText("Condividi il tuo numero per proseguire" + Emoji.FACE_THROWING_A_KISS);
+
+        return sendMessage;
+    }
+
     SendMessage createKeyboardMessage(List<String> commands){
         SendMessage sendMessage = new SendMessage();
 
-        sendMessage.setReplyMarkup(getKeyboard(commands));
+        sendMessage.setReplyMarkup(getKeyboard(commands, false));
         sendMessage.setText("Scegli un'opzione");
 
         return sendMessage;
     }
 
-    private ReplyKeyboardMarkup getKeyboard(List<String> commands) {
+    private ReplyKeyboardMarkup getKeyboard(List<String> commands, boolean contact) {
         List<List<String>> keyboardCommands = new ArrayList<>();
         int j=0;
         for(int i=0; i<commands.size()/2; i++){
@@ -32,17 +41,18 @@ class KeyboardManager {
         if(commands.size() % 2 == 1) keyboardCommands.add(getCommandRow(commands.get(j), null));
 
         ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
-        replyKeyboard.setKeyboard(getKeyboardRows(keyboardCommands));
+        replyKeyboard.setKeyboard(getKeyboardRows(keyboardCommands, contact));
         return replyKeyboard;
     }
 
-    private List<KeyboardRow> getKeyboardRows(List<List<String>> commands) {
+    private List<KeyboardRow> getKeyboardRows(List<List<String>> commands, boolean contact) {
         List<KeyboardRow> keyboardRows = new ArrayList<>();
         for(List<String> commandsRow : commands) {
             KeyboardRow keyboardRow = new KeyboardRow();
             for (String command : commandsRow) {
                 KeyboardButton keyboardButton = new KeyboardButton();
                 keyboardButton.setText(command);
+                keyboardButton.setRequestContact(contact);
                 keyboardRow.add(keyboardButton);
             }
             keyboardRows.add(keyboardRow);

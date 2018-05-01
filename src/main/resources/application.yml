@@ -2,6 +2,8 @@ bot:
   token: 377464414:AAEq-w7-D89rKdXjFjildYgBn2KwvuCGVrc
   username: pacchio97_bot
 
+url: http://localhost:3000/telegram-data
+
 logging:
   level:
     org.springframework.web: ERROR

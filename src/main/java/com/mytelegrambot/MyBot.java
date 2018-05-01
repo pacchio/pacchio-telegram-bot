@@ -36,14 +36,14 @@ public class MyBot extends TelegramLongPollingBot {
     }
 
     private void elabora(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
+        if (textMessage(update) || contactMessage(update)) {
             log.info(getReceivedMessage(update));
             Object message = messageDispatcher.createResponse(update);
             inviaMessaggio(update.getMessage().getChatId(), message);
         }
     }
 
-    public void inviaMessaggio(Long chatId, Object message) {
+    void inviaMessaggio(Long chatId, Object message) {
         try {
             if(message instanceof SendMessage) {
                 ((SendMessage) message).setChatId(chatId);
@@ -81,7 +81,23 @@ public class MyBot extends TelegramLongPollingBot {
         return "Message received from "
                 + update.getMessage().getChat().getFirstName() + " "
                 + update.getMessage().getChat().getLastName() + " : "
-                + update.getMessage().getText();
+                + getContentMessage(update);
+    }
+
+    private String getContentMessage(Update update) {
+        if(contactMessage(update)) {
+            return update.getMessage().getContact().getPhoneNumber();
+        } else {
+            return update.getMessage().getText();
+        }
+    }
+
+    private boolean contactMessage(Update update) {
+        return update.getMessage().getContact() != null;
+    }
+
+    private boolean textMessage(Update update) {
+        return update.hasMessage() && update.getMessage().hasText();
     }
 
     @Override
