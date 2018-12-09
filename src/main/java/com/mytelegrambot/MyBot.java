@@ -43,7 +43,7 @@ public class MyBot extends TelegramLongPollingBot {
         }
     }
 
-    void inviaMessaggio(Long chatId, Object message) {
+    public void inviaMessaggio(Long chatId, Object message) {
         try {
             if(message instanceof SendMessage) {
                 ((SendMessage) message).setChatId(chatId);

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-class KeyboardManager {
+public class KeyboardManager {
 
     SendMessage createKeyboardContact(List<String> commands){
         SendMessage sendMessage = new SendMessage();
@@ -21,7 +21,7 @@ class KeyboardManager {
         return sendMessage;
     }
 
-    SendMessage createKeyboardMessage(List<String> commands){
+    public SendMessage createKeyboardMessage(List<String> commands){
         SendMessage sendMessage = new SendMessage();
 
         sendMessage.setReplyMarkup(getKeyboard(commands, false));

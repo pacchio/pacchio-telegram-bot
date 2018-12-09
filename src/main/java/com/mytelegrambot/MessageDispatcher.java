@@ -1,14 +1,13 @@
 package com.mytelegrambot;
 
-import com.google.api.services.youtube.model.SearchListResponse;
 import com.mytelegrambot.coinmarketcap.CoinMarketCap;
-import com.mytelegrambot.googleSearch.DowloadImageManager;
-import com.mytelegrambot.googleSearch.GResult;
-import com.mytelegrambot.googleSearch.GoogleSearchService;
-import com.mytelegrambot.googleSearch.ImageInfo;
+import com.mytelegrambot.googleSearch.GoogleSearchManager;
+import com.mytelegrambot.play.PlayManager;
+import com.mytelegrambot.raspberry.RaspberryManager;
+import com.mytelegrambot.simpleMessages.SimpleMessagesManager;
 import com.mytelegrambot.youtubeSearch.DownloadAndConvert;
 import com.mytelegrambot.youtubeSearch.MySingletonMap;
-import com.mytelegrambot.youtubeSearch.YoutubeService;
+import com.mytelegrambot.youtubeSearch.YoutubeSearchManager;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +19,9 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 import static com.mytelegrambot.Constants.*;
-import static com.mytelegrambot.ExceptionHelper.getExceptionStacktrace;
+import static com.mytelegrambot.Helper.getRandomSentence;
 
 @Log4j2
 @Component
@@ -43,8 +38,16 @@ class MessageDispatcher {
     private MyBot myBot;
     @Autowired
     private RestTemplate restTemplate;
-
-    private String rasperryToken = "";
+    @Autowired
+    private SimpleMessagesManager simpleMessagesManager;
+    @Autowired
+    private PlayManager playManager;
+    @Autowired
+    private GoogleSearchManager googleSearchManager;
+    @Autowired
+    private YoutubeSearchManager youtubeSearchManager;
+    @Autowired
+    private RaspberryManager raspberryManager;
 
      Object createResponse(Update update) {
 
@@ -70,16 +73,16 @@ class MessageDispatcher {
             case "Raspberry":   return messageManager.getSendMessage("Inserisci la password preceduta da '_'");
 
             case "Ciao":            return messageManager.getSendMessage("Ciao Bambolina" + Emoji.FACE_THROWING_A_KISS);
-            case "Che ore sono?":   return messageManager.getSendMessage(getTime());
-            case "Che giorno è?":   return messageManager.getSendMessage(getDate());
+            case "Che ore sono?":   return messageManager.getSendMessage(simpleMessagesManager.getTime());
+            case "Che giorno è?":   return messageManager.getSendMessage(simpleMessagesManager.getDate());
             case "Pajas":           return messageManager.getSendMessage(getRandomSentence(Constants.RISPOSTE_TRASH));
             case "Ti amo":          return messageManager.getSendMessage("Anche io" + Emoji.SMILING_FACE_WITH_HEART_SHAPED_EYES + Emoji.RED_HEARTH);
 
             case "Cerca su Google": return messageManager.getSendMessage("Scrivi l'immagine da cercare preceduta da '?'\nL'immagine inviata è casuale quindi se non sei soddisfatto ritenta la ricerca! " + Emoji.DIZZY_FACE);
 
-            case SASSO:   return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), SASSO));
-            case CARTA:   return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), CARTA));
-            case FORBICE: return messageManager.getSendMessage(getGame(update.getMessage().getChatId(), FORBICE));
+            case SASSO:   return messageManager.getSendMessage(playManager.getGame(update.getMessage().getChatId(), SASSO));
+            case CARTA:   return messageManager.getSendMessage(playManager.getGame(update.getMessage().getChatId(), CARTA));
+            case FORBICE: return messageManager.getSendMessage(playManager.getGame(update.getMessage().getChatId(), FORBICE));
 
             case "Quote": return messageManager.getSendMessage(new CoinMarketCap().info());
             case "Disallineamenti": return messageManager.getSendMessage(new CoinMarketCap().disallinamenti());
@@ -104,11 +107,11 @@ class MessageDispatcher {
 
     private Object controllaDefault(Message message) {
         if(message.getText().startsWith("#")){
-            return messageManager.getSendMessage(creaResponseRicercaDaYoutube(message.getText().substring(1)));
+            return youtubeSearchManager.youtubeManager(message);
         } else if(message.getText().startsWith("_")) {
-            return manageRaspberryAuthentication(message);
-        } else if(message.getText().contains(rasperryToken)) {
-            return manageRaspberry(message);
+            return raspberryManager.manageRaspberryAuthentication(message);
+        } else if(!StringUtils.isEmpty(raspberryManager.getRasperryToken()) && message.getText().contains(raspberryManager.getRasperryToken())) {
+            return raspberryManager.manageRaspberry(message);
         } else if(message.getText().startsWith("-")){
             myBot.inviaMessaggio(message.getChatId(), messageManager.getSendMessage("Sto scaricando..."));
             Object responseDownload = creaResponseDownloadAudio(message.getText().substring(1));
@@ -138,64 +141,13 @@ class MessageDispatcher {
             }
         }
         else if(message.getText().startsWith("?")){
-            return manageResearchOnGoogle(message);
+            return googleSearchManager.manageResearchOnGoogle(message);
         }
         return getDefaultMessage(message);
     }
 
     private SendMessage getDefaultMessage(Message message) {
         return messageManager.getSendMessage("Il messaggio '" + message.getText() + "' non corrisponde ad alcuna funzione");
-    }
-
-    private Object manageResearchOnGoogle(Message message) {
-        Object responseDownload = creaResponseRicercaDaGoogle(sistemaStrinaRicercaGoogle(message));
-        if(responseDownload instanceof File) {
-            return messageManager.getSendPhoto((File) responseDownload);
-        }
-        else{
-            return messageManager.getSendMessage((String) responseDownload);
-        }
-    }
-
-    private SendMessage manageRaspberryAuthentication(Message message) {
-        if(StringUtils.equals(message.getText().substring(1), Constants.RASPBERRY_PWD)){
-            rasperryToken = (new Random().nextInt((999 - 100) + 1) + 100) + "";
-            return keyboardManager.createKeyboardMessage(RaspberryCommandsWithToken());
-        } else {
-            return messageManager.getSendMessage("Password errata.");
-        }
-    }
-
-    private SendMessage manageRaspberry(Message message) {
-         if(message.getText().contains("MoneyHoney")){
-            try {
-                String command = message.getText().replace(rasperryToken, "");
-                myBot.inviaMessaggio(message.getChatId(), messageManager.getSendMessage("Comando eseguito: " + command));
-                String path = "D:\\Development\\workspace\\static-web-site\\moneyhoney\\automatic-runner\\";
-                Runtime.getRuntime().exec("cmd /c start " + path + "launch.bat");
-                return messageManager.getSendMessage("Comando eseguito correttamente");
-            } catch (Exception e) {
-                log.error(getExceptionStacktrace(e));
-                return messageManager.getSendMessage("Errore durante l'esecuzione del comando");
-            }
-         }
-        return getDefaultMessage(message);
-    }
-
-    private List<String> RaspberryCommandsWithToken() {
-        List<String> commands = new ArrayList<>();
-        for(String command : Constants.RASPBERRY_COMMANDS) {
-            if(!StringUtils.equals(command, "Indietro")) {
-                commands.add("[" + rasperryToken + "] " + command);
-            } else {
-                commands.add(command);
-            }
-        }
-        return commands;
-    }
-
-    private String sistemaStrinaRicercaGoogle(Message message) {
-        return message.getText().substring(1).replaceAll(" ", "%20");
     }
 
     private Object creaResponseDownloadAudio(String index) {
@@ -206,85 +158,5 @@ class MessageDispatcher {
     private Object creaResponseDownloadVideo(String index) {
         DownloadAndConvert downloadAndConvert = new DownloadAndConvert();
         return downloadAndConvert.startVideo(MySingletonMap.getInstance().getMap().get(Integer.parseInt(index)));
-    }
-
-    private String creaResponseRicercaDaYoutube(String chiaveDiRicerca) {
-        YoutubeService youtubeService = new YoutubeService();
-        try {
-            SearchListResponse response = youtubeService.ricercaSuYoutube(chiaveDiRicerca);
-            return youtubeService.visualizzaListaRisultati(response);
-        } catch (IOException e) {
-            log.error(getExceptionStacktrace(e));
-            return "Errore durante la ricerca " + Emoji.CRYING_CAT_FACE;
-        }
-    }
-
-    private Object creaResponseRicercaDaGoogle(String chiaveDiRicerca) {
-        GoogleSearchService googleSearchService = new GoogleSearchService();
-        DowloadImageManager dowloadImageManager = new DowloadImageManager();
-        try {
-            List<GResult> results = googleSearchService.search(chiaveDiRicerca);
-            Map<Integer, ImageInfo> resultsUrl = googleSearchService.creaListaRisultati(results);
-            ImageInfo imageInfo = resultsUrl.get(new Random().nextInt(20));
-            return dowloadImageManager.download(imageInfo.getUrl(), imageInfo.getFilename());
-        } catch (Exception e) {
-            log.error(getExceptionStacktrace(e));
-            return e.getMessage() + Emoji.CRYING_CAT_FACE;
-        }
-    }
-
-    private String getGame(Long chatId, String sceltaGiocatore) {
-        List<String> sceltePossibili = Arrays.asList(SASSO, CARTA, FORBICE);
-        String sceltaPc = sceltePossibili.get(new Random().nextInt(sceltePossibili.size()));
-        myBot.inviaMessaggio(chatId, messageManager.getSendMessage(sceltaPc));
-
-        if(sceltaGiocatore.equals(sceltaPc)){
-            return "PAREGGIO" + Emoji.SMILING_FACE_WITH_OPEN_MOUTH_AND_SMILING_EYES;
-        }
-        else{
-            switch (sceltaGiocatore){
-                case SASSO: return sceltaPc.equals(FORBICE) ? "HAI VINTO\n"
-                        + getRandomSentence(Constants.RISPOSTE_VITTORIA) : "HAI PERSO\n"
-                        + getRandomSentence(Constants.RISPOSTE_SCONFITTA);
-                case CARTA: return sceltaPc.equals(SASSO) ? "HAI VINTO\n"
-                        + getRandomSentence(Constants.RISPOSTE_VITTORIA) : "HAI PERSO\n"
-                        + getRandomSentence(Constants.RISPOSTE_SCONFITTA);
-                case FORBICE: return sceltaPc.equals(CARTA) ? "HAI VINTO\n"
-                        + getRandomSentence(Constants.RISPOSTE_VITTORIA) : "HAI PERSO\n"
-                        + getRandomSentence(Constants.RISPOSTE_SCONFITTA);
-            }
-        }
-        return null;
-    }
-
-    private String getRandomSentence(List<String> listaRisposte) {
-        return listaRisposte.get(new Random().nextInt(listaRisposte.size()));
-    }
-
-    private String getTime(){
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        Calendar now = Calendar.getInstance();
-        return sdf.format(now.getTime());
-    }
-
-    private String getDate(){
-        Calendar now = Calendar.getInstance();
-        int year = now.get(Calendar.YEAR);
-        int month = now.get(Calendar.MONTH) + 1;
-        int day = now.get(Calendar.DAY_OF_MONTH);
-
-        // First convert to Date. This is one of the many ways.
-        String dateString = String.format("%d-%d-%d", year, month, day);
-        Date date = null;
-        try {
-            date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
-        } catch (ParseException e) {
-            log.error(getExceptionStacktrace(e));
-        }
-
-        // Then get the day of week from the Date based on specific locale.
-        String dayOfWeek = new SimpleDateFormat("EEEE", Locale.ITALY).format(date);
-
-        return dayOfWeek + ", " + day + "/" + month + "/" + year;
     }
 }

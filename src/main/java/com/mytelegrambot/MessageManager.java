@@ -9,15 +9,15 @@ import org.telegram.telegrambots.api.methods.send.SendVideo;
 import java.io.File;
 
 @Component
-class MessageManager {
+public class MessageManager {
 
-    SendMessage getSendMessage(String contenuto){
+    public SendMessage getSendMessage(String contenuto){
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(contenuto);
         return sendMessage;
     }
 
-    SendPhoto getSendPhoto(File photo) {
+    public SendPhoto getSendPhoto(File photo) {
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setNewPhoto(photo);
         return sendPhoto;

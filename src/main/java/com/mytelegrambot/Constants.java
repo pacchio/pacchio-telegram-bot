@@ -6,21 +6,24 @@ import java.util.List;
 public class Constants {
     public static final int SOCKET_TIMEOUT = 75 * 1000;
 
+//    public static final String MONEYHONEY_PATH = "/home/pi/";
+    public static final String MONEYHONEY_PATH = "D:\\Development\\workspace\\static-web-site\\moneyhoney\\automatic-runner\\";
+
     public static String PHOTOS_FOLDER = "/home/pi/bot-resources/foto/";
 //    public static String PHOTOS_FOLDER = "C:\\Development\\workspace\\java-project\\my-telegram-bot\\bot-resources\\foto";
-//    public static String PHOTOS_FOLDER = "D:\\Users\\arx50054\\Desktop\\foto";
+//    public static String PHOTOS_FOLDER = "D:\\Development\\workspace\\my-telegram-bot\\foto";
 
     public static String AUDIO_FOLDER = "/home/pi/bot-resources/audio-video/";
 //    public static String AUDIO_FOLDER = "C:\\Development\\workspace\\java-project\\my-telegram-bot\\bot-resources\\audio-video";
 //    public static String AUDIO_FOLDER = "D:\\Users\\arx50054\\Desktop\\audio-video";
 
-    final static String SASSO = "Sasso\u270A";
-    final static String CARTA = "Carta\u270B";
-    final static String FORBICE = "Forbice\u270C";
+    public final static String SASSO = "Sasso\u270A";
+    public final static String CARTA = "Carta\u270B";
+    public final static String FORBICE = "Forbice\u270C";
 
     static List<String> RISPOSTE_TRASH = Arrays.asList("Tu sei ricco", "Che bella vita che fai", "Tu sei bellooo", "Vivi un sogno");
-    static List<String> RISPOSTE_VITTORIA = Arrays.asList("Madonna, che forte...", "Proprio bravo!", "Tanta roba...", "Bella giocata!");
-    static List<String> RISPOSTE_SCONFITTA = Arrays.asList("Dai magari la prossima volta" + Emoji.FACE_THROWING_A_KISS, "Ritenta, sarai più fortunato", "Ahahahahahaha, ciao dai", "Che scarso oh..." + Emoji.FACE_WITH_TEARS_OF_JOY);
+    public static List<String> RISPOSTE_VITTORIA = Arrays.asList("Madonna, che forte...", "Proprio bravo!", "Tanta roba...", "Bella giocata!");
+    public static List<String> RISPOSTE_SCONFITTA = Arrays.asList("Dai magari la prossima volta" + Emoji.FACE_THROWING_A_KISS, "Ritenta, sarai più fortunato", "Ahahahahahaha, ciao dai", "Che scarso oh..." + Emoji.FACE_WITH_TEARS_OF_JOY);
 
     static List<String> CONTACT_COMMAND = Arrays.asList("Prosegui");
     static List<String> INIT_COMMANDS = Arrays.asList("Audio/Video", "Foto", "Gioca", "Messaggiamo", "Coin Market Cap", "Raspberry");
@@ -29,9 +32,9 @@ public class Constants {
     static List<String> PLAY_COMMANDS = Arrays.asList(SASSO, CARTA, FORBICE, "Indietro");
     static List<String> TEXT_COMMANDS = Arrays.asList("Ciao", "Che ore sono?", "Che giorno è?", "Pajas", "Ti amo", "Indietro");
     static List<String> COINMARKETCAP_COMMANDS = Arrays.asList("Ciao", "Quote", "Disallineamenti", "Indietro");
-    static List<String> RASPBERRY_COMMANDS = Arrays.asList("MoneyHoney", "X", "X", "Indietro");
+    public static List<String> RASPBERRY_COMMANDS = Arrays.asList("MoneyHoney", "X", "X", "Indietro");
 
-    static final String RASPBERRY_PWD = "pi";
+    public static final String RASPBERRY_PWD = "pi";
 
     public static final String MESSAGE_COINMARKETCAP_FAILED = "Impossibile reperire le informazioni " + Emoji.CRYING_FACE;
     public static final String MESSAGE_AUDIO_FAILED = "Impossibile convertire questo video " + Emoji.CRYING_FACE;
