@@ -2,7 +2,8 @@ bot:
   token: 377464414:AAEq-w7-D89rKdXjFjildYgBn2KwvuCGVrc
   username: pacchio97_bot
 
-url: http://localhost:3000/telegram-data
+#url: http://localhost:3000/telegram-data
+url: https://my-data-monitor.herokuapp.com/telegram-data
 
 logging:
   level:

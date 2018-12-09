@@ -10,10 +10,12 @@ import com.mytelegrambot.youtubeSearch.DownloadAndConvert;
 import com.mytelegrambot.youtubeSearch.MySingletonMap;
 import com.mytelegrambot.youtubeSearch.YoutubeService;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 
@@ -42,6 +44,8 @@ class MessageDispatcher {
     @Autowired
     private RestTemplate restTemplate;
 
+    private String rasperryToken = "";
+
      Object createResponse(Update update) {
 
         if(update.getMessage().getContact() != null){
@@ -63,6 +67,7 @@ class MessageDispatcher {
             case "Gioca":   return keyboardManager.createKeyboardMessage(Constants.PLAY_COMMANDS);
             case "Messaggiamo":   return keyboardManager.createKeyboardMessage(Constants.TEXT_COMMANDS);
             case "Coin Market Cap":   return keyboardManager.createKeyboardMessage(Constants.COINMARKETCAP_COMMANDS);
+            case "Raspberry":   return messageManager.getSendMessage("Inserisci la password preceduta da '_'");
 
             case "Ciao":            return messageManager.getSendMessage("Ciao Bambolina" + Emoji.FACE_THROWING_A_KISS);
             case "Che ore sono?":   return messageManager.getSendMessage(getTime());
@@ -100,8 +105,11 @@ class MessageDispatcher {
     private Object controllaDefault(Message message) {
         if(message.getText().startsWith("#")){
             return messageManager.getSendMessage(creaResponseRicercaDaYoutube(message.getText().substring(1)));
-        }
-        else if(message.getText().startsWith("-")){
+        } else if(message.getText().startsWith("_")) {
+            return manageRaspberryAuthentication(message);
+        } else if(message.getText().contains(rasperryToken)) {
+            return manageRaspberry(message);
+        } else if(message.getText().startsWith("-")){
             myBot.inviaMessaggio(message.getChatId(), messageManager.getSendMessage("Sto scaricando..."));
             Object responseDownload = creaResponseDownloadAudio(message.getText().substring(1));
             if(responseDownload instanceof File){
@@ -130,15 +138,60 @@ class MessageDispatcher {
             }
         }
         else if(message.getText().startsWith("?")){
-            Object responseDownload = creaResponseRicercaDaGoogle(sistemaStrinaRicercaGoogle(message));
-            if(responseDownload instanceof File) {
-                return messageManager.getSendPhoto((File) responseDownload);
+            return manageResearchOnGoogle(message);
+        }
+        return getDefaultMessage(message);
+    }
+
+    private SendMessage getDefaultMessage(Message message) {
+        return messageManager.getSendMessage("Il messaggio '" + message.getText() + "' non corrisponde ad alcuna funzione");
+    }
+
+    private Object manageResearchOnGoogle(Message message) {
+        Object responseDownload = creaResponseRicercaDaGoogle(sistemaStrinaRicercaGoogle(message));
+        if(responseDownload instanceof File) {
+            return messageManager.getSendPhoto((File) responseDownload);
+        }
+        else{
+            return messageManager.getSendMessage((String) responseDownload);
+        }
+    }
+
+    private SendMessage manageRaspberryAuthentication(Message message) {
+        if(StringUtils.equals(message.getText().substring(1), Constants.RASPBERRY_PWD)){
+            rasperryToken = (new Random().nextInt((999 - 100) + 1) + 100) + "";
+            return keyboardManager.createKeyboardMessage(RaspberryCommandsWithToken());
+        } else {
+            return messageManager.getSendMessage("Password errata.");
+        }
+    }
+
+    private SendMessage manageRaspberry(Message message) {
+         if(message.getText().contains("MoneyHoney")){
+            try {
+                String command = message.getText().replace(rasperryToken, "");
+                myBot.inviaMessaggio(message.getChatId(), messageManager.getSendMessage("Comando eseguito: " + command));
+                String path = "D:\\Development\\workspace\\static-web-site\\moneyhoney\\automatic-runner\\";
+                Runtime.getRuntime().exec("cmd /c start " + path + "launch.bat");
+                return messageManager.getSendMessage("Comando eseguito correttamente");
+            } catch (Exception e) {
+                log.error(getExceptionStacktrace(e));
+                return messageManager.getSendMessage("Errore durante l'esecuzione del comando");
             }
-            else{
-                return messageManager.getSendMessage((String) responseDownload);
+         }
+        return getDefaultMessage(message);
+    }
+
+    private List<String> RaspberryCommandsWithToken() {
+        List<String> commands = new ArrayList<>();
+        for(String command : Constants.RASPBERRY_COMMANDS) {
+            if(!StringUtils.equals(command, "Indietro")) {
+                commands.add("[" + rasperryToken + "] " + command);
+            } else {
+                commands.add(command);
             }
         }
-        return messageManager.getSendMessage("Il messaggio '" + message.getText() + "' non corrisponde ad alcuna funzione");
+        return commands;
     }
 
     private String sistemaStrinaRicercaGoogle(Message message) {

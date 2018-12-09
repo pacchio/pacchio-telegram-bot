@@ -1,0 +1,46 @@
+Configutation:
+  name: Default
+  Properties:
+    Property:
+      name: log-path
+      value: "logs"
+  Appenders:
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{10} - %msg%n"
+    File:
+      name: File_Appender
+      #      fileName: /home/pi/bot-resources/logfile.log
+      fileName: D:\Development\workspace\logfile.log
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{10} - %msg%n"
+    RollingFile:
+    - name: RollingFile_Appender
+      #      fileName: /home/pi/bot-resources/rollingfile.log
+      fileName: D:\Development\workspace\rollingfile.log
+      filePattern: "logs/archive/rollingfile.log.%d{yyyy-MM-dd-hh-mm}.gz"
+      PatternLayout:
+        pattern: "[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{10} - %msg%n"
+      Policies:
+        SizeBasedTriggeringPolicy:
+          size: 1 KB
+      DefaultRollOverStrategy:
+        max: 30
+  Loggers:
+    Root:
+      level: debug
+      AppenderRef:
+      - ref: Console_Appender
+    Logger:
+    - name: com.mytelegrambot.logger
+      additivity: false
+      level: debug
+      AppenderRef:
+      - ref: Console_Appender
+        level: info
+      - ref: File_Appender
+        level: error
+      - ref: RollingFile_Appender
+        level: debug
