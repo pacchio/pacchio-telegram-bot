@@ -1,9 +1,11 @@
 package com.mytelegrambot;
 
+import com.mytelegrambot.raspberry.RaspberryManager;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.methods.send.SendAudio;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -29,6 +31,19 @@ public class MyBot extends TelegramLongPollingBot {
     private MessageDispatcher messageDispatcher;
     @Autowired
     private TaskExecutor taskExecutor;
+    @Autowired
+    private RaspberryManager raspberryManager;
+
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void scheduleTaskWithCronExpression() {
+        try {
+            if(raspberryManager.getSchedulingState()) {
+                inviaMessaggio(342647616L, raspberryManager.testMoneyHoney());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onUpdateReceived(Update update) {

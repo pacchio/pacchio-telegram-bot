@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,6 +25,7 @@ public class RaspberryManager {
     private MessageManager messageManager;
 
     private String rasperryToken = "";
+    private boolean schedulingState = false;
 
     @Autowired
     public RaspberryManager(KeyboardManager keyboardManager, MessageManager messageManager) {
@@ -33,6 +35,10 @@ public class RaspberryManager {
 
     public String getRasperryToken() {
         return rasperryToken;
+    }
+
+    public boolean getSchedulingState() {
+        return schedulingState;
     }
 
     public SendMessage manageRaspberryAuthentication(Message message) {
@@ -47,16 +53,29 @@ public class RaspberryManager {
     public SendMessage manageRaspberry(Message message) {
         if(message.getText().contains("MoneyHoney")){
             try {
-                Runtime.getRuntime().exec("taskkill /IM cmd.exe");
-                Thread.sleep(500);
-                Runtime.getRuntime().exec("cmd /c start \"\" " + Constants.MONEYHONEY_PATH + "launch.bat");
-                return messageManager.getSendMessage("Comando eseguito correttamente");
+                return testMoneyHoney();
+            } catch (Exception e) {
+                log.error(getExceptionStacktrace(e));
+                return messageManager.getSendMessage("Errore durante l'esecuzione del comando");
+            }
+        }
+        if(message.getText().contains("Toggle scheduling")){
+            try {
+                schedulingState = !schedulingState;
+                return messageManager.getSendMessage("Stato scheduling: " + schedulingState);
             } catch (Exception e) {
                 log.error(getExceptionStacktrace(e));
                 return messageManager.getSendMessage("Errore durante l'esecuzione del comando");
             }
         }
         return getDefaultMessage(message);
+    }
+
+    public SendMessage testMoneyHoney() throws IOException, InterruptedException {
+        Runtime.getRuntime().exec("taskkill /IM cmd.exe");
+        Thread.sleep(500);
+        Runtime.getRuntime().exec("cmd /c start \"\" " + Constants.MONEYHONEY_PATH + "launch.bat");
+        return messageManager.getSendMessage("Comando eseguito correttamente");
     }
 
     private SendMessage getDefaultMessage(Message message) {
