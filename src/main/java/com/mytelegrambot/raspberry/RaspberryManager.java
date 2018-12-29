@@ -72,16 +72,7 @@ public class RaspberryManager {
     }
 
     public SendMessage testMoneyHoney() throws IOException, InterruptedException {
-        Runtime.getRuntime().exec("taskkill /IM cmd.exe");
-        Runtime.getRuntime().exec("taskkill /IM chromedriver.exe");
-        Runtime.getRuntime().exec("taskkill /IM chrome.exe");
-        Runtime.getRuntime().exec("taskkill /IM node.exe");
-        Thread.sleep(500);
-        Runtime.getRuntime().exec("cmd /c start \"\" " + Constants.MONEYHONEY_PATH + "launch.bat");
-//        Thread.sleep(500);
-//        Runtime.getRuntime().exec("cmd /c start \"\" " + Constants.MONEYHONEY_PATH + "start-selenium-server.bat");
-//        Thread.sleep(3000);
-//        Runtime.getRuntime().exec("cmd /c start \"\" " + Constants.MONEYHONEY_PATH + "start-test.bat");
+        new MoneyHoneyManager().run();
         return messageManager.getSendMessage("Comando eseguito correttamente");
     }
 

@@ -7,8 +7,8 @@ public class Constants {
     public static final int SOCKET_TIMEOUT = 75 * 1000;
 
 //    public static final String MONEYHONEY_PATH = "/home/pi/";
-    public static final String MONEYHONEY_PATH = "D:\\Development\\workspace\\static-web-site\\moneyhoney\\automatic-runner\\";
-//    public static final String MONEYHONEY_PATH = "D:\\Development\\workspace\\static-web-site\\moneyhoney\\automatic-runner-nodejs\\";
+//    public static final String MONEYHONEY_PATH = "D:\\Development\\workspace\\static-web-site\\moneyhoney\\automatic-runner\\";
+    public static final String MONEYHONEY_PATH = "D:\\Development\\workspace\\static-web-site\\moneyhoney\\automatic-runner-nodejs\\";
 
 //    public static String PHOTOS_FOLDER = "/home/pi/bot-resources/foto/";
 //    public static String PHOTOS_FOLDER = "C:\\Development\\workspace\\java-project\\my-telegram-bot\\bot-resources\\foto";

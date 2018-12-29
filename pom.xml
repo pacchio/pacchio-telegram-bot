@@ -87,7 +87,7 @@
         <!--
             mvn install:install-file
             -Dfile=D:\Users\arx50054\Desktop\prove\libraries\jave-1.0.2\jave-1.0.2.jar
-            -DgroupId=com.jave.code
+            -DgroupId=com.jave.country
             -DartifactId=jave
             -Dversion=1.0.2
             -Dpackaging=jar
