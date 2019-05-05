@@ -6,8 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import static com.mytelegrambot.raspberry.ProxyListService.URL_ONLY_USA;
-
 public class MoneyHoneyManager {
 
     private final static String config_start = "exports.config = {\n"+
@@ -20,7 +18,7 @@ public class MoneyHoneyManager {
             "            chromeOptions: {\n" +
             "                args: [\"--incognito\"";
 
-    private final static String config_capability_end = "\"]\n" +
+    private final static String config_capability_end = "]\n" +
             "            }\n" +
             "        },\n";
 
@@ -29,16 +27,16 @@ public class MoneyHoneyManager {
 
     public void run() throws IOException, InterruptedException {
         Runtime.getRuntime().exec("taskkill /IM cmd.exe");
-        Thread.sleep(13000);
-        Runtime.getRuntime().exec("taskkill /IM chrome.exe");
-        Thread.sleep(13000);
-        Runtime.getRuntime().exec("taskkill /IM chromedriver.exe");
-        Thread.sleep(13000);
+        Thread.sleep(3000);
+        Runtime.getRuntime().exec("taskkill /IM chrome.exe /F");
+        Thread.sleep(2000);
+        Runtime.getRuntime().exec("taskkill /IM chromedriver.exe /F");
+        Thread.sleep(2000);
 
-        ProxyListService proxyListService = new ProxyListService();
-        List<Proxy> proxyList = proxyListService.getProxyListOnlyHttps(URL_ONLY_USA);
-        List<Proxy> proxyListLimited = proxyListService.getListLimitedTo(proxyList, 5);
-        writeFile(proxyListLimited);
+//        ProxyListService proxyListService = new ProxyListService();
+//        List<Proxy> proxyList = proxyListService.getProxyListOnlyHttps(URL_ONLY_USA);
+//        List<Proxy> proxyListLimited = proxyListService.getListLimitedTo(proxyList, 5);
+//        writeFile(proxyListLimited, 5);
 
         Runtime.getRuntime().exec("cmd /c start \"\" " + Constants.MONEYHONEY_PATH + "start-selenium-server.bat");
         Thread.sleep(3000);
@@ -47,7 +45,7 @@ public class MoneyHoneyManager {
         Runtime.getRuntime().exec("cmd /c start \"\" " + Constants.MONEYHONEY_PATH + "delete-local-temp.bat");
     }
 
-    public void writeFile(List<Proxy> proxyList) throws IOException {
+    public void writeFile(List<Proxy> proxyList, int numeroConfigurazioniNormali) throws IOException {
         StringBuilder fileContent = new StringBuilder();
 
         fileContent.append(config_start);
@@ -59,6 +57,12 @@ public class MoneyHoneyManager {
                     .append(proxy.getHost())
                     .append(":")
                     .append(proxy.getPort())
+                    .append("\"")
+                    .append(config_capability_end);
+        }
+        for(int i = 0; i < numeroConfigurazioniNormali; i++) {
+            fileContent
+                    .append(config_capability_start)
                     .append(config_capability_end);
         }
 

@@ -34,7 +34,7 @@ public class MyBot extends TelegramLongPollingBot {
     @Autowired
     private RaspberryManager raspberryManager;
 
-    @Scheduled(cron = "0 0/6 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void scheduleTaskWithCronExpression() {
         try {
             if(raspberryManager.getSchedulingState()) {

@@ -10,13 +10,13 @@ public class Constants {
 //    public static final String MONEYHONEY_PATH = "D:\\Development\\workspace\\static-web-site\\moneyhoney\\automatic-runner\\";
     public static final String MONEYHONEY_PATH = "D:\\Development\\workspace\\static-web-site\\moneyhoney\\automatic-runner-nodejs\\";
 
-//    public static String PHOTOS_FOLDER = "/home/pi/bot-resources/foto/";
+    public static String PHOTOS_FOLDER = "/home/pi/Development/bot-resources/foto/";
 //    public static String PHOTOS_FOLDER = "C:\\Development\\workspace\\java-project\\my-telegram-bot\\bot-resources\\foto";
-    public static String PHOTOS_FOLDER = "D:\\Development\\workspace\\my-telegram-bot\\foto";
+//    public static String PHOTOS_FOLDER = "D:\\Development\\workspace\\my-telegram-bot\\foto";
 
-//    public static String AUDIO_FOLDER = "/home/pi/bot-resources/audio-video/";
+    public static String AUDIO_FOLDER = "/home/pi/Development/bot-resources/audio-video/";
 //    public static String AUDIO_FOLDER = "C:\\Development\\workspace\\java-project\\my-telegram-bot\\bot-resources\\audio-video";
-    public static String AUDIO_FOLDER = "D:\\Development\\workspace\\my-telegram-bot\\audio-video";
+//    public static String AUDIO_FOLDER = "D:\\Development\\workspace\\my-telegram-bot\\audio-video";
 
     public final static String SASSO = "Sasso\u270A";
     public final static String CARTA = "Carta\u270B";

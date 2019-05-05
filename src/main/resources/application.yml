@@ -9,5 +9,5 @@ logging:
   level:
     org.springframework.web: ERROR
     com.mytelegrambot: DEBUG
-#  file: C:\Development\workspace\java-project\my-telegram-bot\bot-resources\application.log
-  file: /home/pi/bot-resources/application.log
+#  file: C:\Development\logs\my-telegram-bot\application.log
+  file: /home/pi/Development/logs/my-telegram-bot/application.log

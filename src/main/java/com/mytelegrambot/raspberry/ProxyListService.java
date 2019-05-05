@@ -18,7 +18,6 @@ public class ProxyListService {
 	final static String URL_ONLY_UK = "https://free-proxy-list.net/uk-proxy.html";
 	final static String URL_ALL = "https://free-proxy-list.net/";
 
-
 	public static void main(String[] args) {
 		ProxyListService proxyListService = new ProxyListService();
 		try {
