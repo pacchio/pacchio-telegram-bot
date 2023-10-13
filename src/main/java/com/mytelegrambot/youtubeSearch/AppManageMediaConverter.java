@@ -1,7 +1,7 @@
 package com.mytelegrambot.youtubeSearch;
 
-import it.sauronsoftware.jave.*;
 import lombok.extern.log4j.Log4j2;
+import ws.schild.jave.*;
 
 import java.io.File;
 
@@ -9,38 +9,30 @@ import java.io.File;
 public class AppManageMediaConverter {
 
 	public Boolean convertToMp3(File source, File target) {
-
 		EncodingAttributes attrs = convertVideoToMp3();
-
 		Encoder encoder = new Encoder();
 		try {
 			log.info("Start conversion in mp3 format...");
-			encoder.encode(source, target, attrs);
+			encoder.encode(new MultimediaObject(source), target, attrs);
 			log.info("File converted");
 			return true;
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Error in file conversion", e);
 		} catch (InputFormatException e) {
 			throw new IllegalArgumentException("Error in file conversion, probably video is not in a correct format!", e);
-		} catch (EncoderException e) {
+		} catch (IllegalArgumentException | EncoderException e) {
 			throw new IllegalArgumentException("Error in file conversion", e);
 		}
 	}
 
 	public void convertToMp4(File source, File target) {
-
 		EncodingAttributes attrs = convertVideoToMp4();
-
 		Encoder encoder = new Encoder();
 		try {
 			log.info("Start conversion in mp4 format...");
-			encoder.encode(source, target, attrs);
+			encoder.encode(new MultimediaObject(source), target, attrs);
 			log.info("File converted!");
-		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("Error in file conversion", e);
 		} catch (InputFormatException e) {
 			throw new IllegalArgumentException("Error in file conversion, probably video is not in a correct format!", e);
-		} catch (EncoderException e) {
+		} catch (IllegalArgumentException | EncoderException e) {
 			throw new IllegalArgumentException("Error in file conversion", e);
 		}
 	}
@@ -58,7 +50,7 @@ public class AppManageMediaConverter {
 
 	private static EncodingAttributes getEncodingAttributes(AudioAttributes audio, VideoAttributes video, String format) {
 		EncodingAttributes attrs = new EncodingAttributes();
-		attrs.setFormat(format);
+		attrs.setFormat("mp4");
 		attrs.setAudioAttributes(audio);
 		attrs.setVideoAttributes(video);
 		return attrs;
@@ -66,19 +58,23 @@ public class AppManageMediaConverter {
 
 	private static VideoAttributes getVideoAttributes() {
 		VideoAttributes video = new VideoAttributes();
-		video.setBitRate(new Integer(160000));
-		video.setFrameRate(new Integer(15));
-		video.setCodec("mpeg4");
-		video.setCodec(VideoAttributes.DIRECT_STREAM_COPY);
+		video.setCodec("h264");
+		video.setX264Profile(VideoAttributes.X264_PROFILE.BASELINE);
+		// Here 160 kbps video is 160000
+		video.setBitRate(160000);
+		// More the frames more quality and size, but keep it low based on devices like mobile
+		video.setFrameRate(15);
+		video.setSize(new VideoSize(400, 300));
 		return video;
 	}
 
 	private static AudioAttributes getAudioAttribute() {
 		AudioAttributes audio = new AudioAttributes();
-		audio.setCodec("libmp3lame");
-		audio.setBitRate(new Integer(128000));
-		audio.setSamplingRate(new Integer(44100));
-		audio.setChannels(new Integer(2));
+		audio.setCodec("aac");
+		// here 64kbit/s is 64000
+		audio.setBitRate(64000);
+		audio.setChannels(2);
+		audio.setSamplingRate(44100);
 		return audio;
 	}
 }

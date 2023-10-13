@@ -69,6 +69,9 @@ public class ProxyListService {
 
 	List<Proxy> getListLimitedTo(List<Proxy> proxyList, int number) {
 		List<Proxy> proxyListLimited = new ArrayList<>();
+		if (proxyList.size() == 0) {
+			return new ArrayList<>();
+		}
 		while (proxyListLimited.size() != number) {
 			Proxy proxy = proxyList.get((int) (Math.random() * proxyList.size()));
 			if(new CheckProxy().checkProxie(proxy.getHost(), Integer.parseInt(proxy.getPort()))) {
